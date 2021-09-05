@@ -1,0 +1,36 @@
+﻿* {
+    font-family: Verdana;
+}
+body {
+    background-image: url(../img/login1.jpg);
+    height: 90vh;
+    background-size: cover;
+    background-position: center;
+    font-family: 'Roboto', sans-serif;
+}
+.field {
+    width: 250px;
+    background-color:transparent;
+    border-color:white;
+    color: white !important;
+}
+    .field:focus {
+        box-shadow: none;
+    }
+.text-danger{
+    color:white !important;
+}
+.field::-webkit-input-placeholder {
+        color: white;
+}
+    .field:focus, .field:target{
+        background-color: transparent;
+        border-color: white;
+    }
+    
+.wrapper {
+    padding-top: 200px;
+}
+.footer {
+    position: absolute;
+}

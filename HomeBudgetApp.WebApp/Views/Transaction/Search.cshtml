@@ -1,0 +1,83 @@
+﻿@model HomeBudgetApp.WebApp.Models.AccountDetailsModel
+
+@{
+    ViewData["Title"] = "Search Transactions";
+}
+@section Style{
+    <link rel="stylesheet" href="~/css/details.css" />
+}
+
+<h1>Search Transaction</h1>
+
+<div class="search-container">
+    <input id="param" type="text" value="@Model.Query" />
+    <select id="type">
+        <option value="0" selected>Choose type</option>
+        <option value="1">Income</option>
+        <option value="2">Expense</option>
+    </select>
+    <select id="dateOrder">
+        <option value="0" selected>Sort by date</option>
+        <option value="1">Most recent</option>
+        <option value="2">From begining</option>
+    </select>
+    <button class="btn btn-primary" id="btn-search">Search</button>
+</div>
+
+
+<table class="table">
+    <thead>
+        <tr>
+            <th></th>
+            <th>Amount</th>
+            <th>DateTime</th>
+            <th>Purpose</th>
+            <th>Sender</th>
+            <th>Recipient</th>
+            <th></th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var t in Model.Transactions)
+        {
+        <tr>
+            @if (t.AccountID == Model.OwnerAccountID)
+            {
+                <td><img class="payment-icon" src="~/img/minus.png" /></td>
+            }
+            else
+            {
+                <td><img class="payment-icon" src="~/img/plus.png" /></td>
+            }
+            <td>@t.Amount</td>
+            <td>@t.DateTime</td>
+            <td>@t.Purpose</td>
+            <td>@Model.Accounts.Find(a => a.AccountID == t.AccountID).Number</td>
+            <td>@Model.Accounts.Find(a => a.AccountID == t.RecipientID).Number</td>
+            <td>@Html.ActionLink("Details", "ShowDetails", "Transaction", new { id = t.TransactionID, t.AccountID, t.RecipientID, Model.OwnerAccountID })</td>
+            <td>@Html.ActionLink("Edit", "ShowEdit", "Transaction", new { id = t.TransactionID, t.AccountID, t.RecipientID, Model.OwnerAccountID })</td>
+        </tr>
+        }
+    </tbody>
+</table>
+
+@section Scripts{
+    <script>
+            $('#btn-search').click(function (e) {
+                e.preventDefault();
+
+                $.ajax({
+                    url: '@Url.ActionLink("GetResults", "Transaction")',
+                    method: 'get',
+                    data: { Param: $('#param').val(), Type: $('#type').val(), DateOrder: $('#dateOrder').val() },
+                    success: function (response) {
+                        window.location.href = response.redirectToUrl;
+                    },
+                    error: function () {
+                    alert("Error");
+                    }
+                });
+            });
+    </script>
+}

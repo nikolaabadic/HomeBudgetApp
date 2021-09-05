@@ -1,0 +1,34 @@
+﻿@model HomeBudgetApp.WebApp.Models.PaymentCardCreateModel
+
+@{
+    ViewData["Title"] = "Create";
+}
+@section Style{
+    <link rel="stylesheet" href="~/css/details.css" />
+}
+<h1>Create a new Payment Card</h1>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Create">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+            <div class="form-group">
+                <label asp-for="PaymentCardNumber" class="control-label"></label>
+                <input asp-for="PaymentCardNumber" class="form-control" />
+                <span asp-validation-for="PaymentCardNumber" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="PINCode" class="control-label"></label>
+                <input asp-for="PINCode" class="form-control" />
+                <span asp-validation-for="PINCode" class="text-danger"></span>
+            </div>
+
+            <input hidden asp-for="AccountID" class="form-control" value="@Model.AccountID" />
+            <div class="form-group">
+                <input type="submit" value="Create" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+

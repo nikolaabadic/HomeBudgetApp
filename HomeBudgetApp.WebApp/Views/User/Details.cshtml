@@ -1,0 +1,62 @@
+﻿@model HomeBudgetApp.WebApp.Models.UserDetailsModel
+
+@{
+    ViewData["Title"] = "Home";
+}
+@section Style{
+    <link rel="stylesheet" href="~/css/details.css" />
+}
+<h1>About me</h1>
+
+<div class="user-info">
+    <img src="~/img/user.png" />
+    <dl class="row">
+        <dt class="col-sm-4">
+            @Html.DisplayNameFor(model => model.Name)
+        </dt>
+        <dd class="col-sm-8">
+            @Html.DisplayFor(model => model.Name)
+        </dd>
+        <dt class="col-sm-4">
+            @Html.DisplayNameFor(model => model.Surname)
+        </dt>
+        <dd class="col-sm-8">
+            @Html.DisplayFor(model => model.Surname)
+        </dd>
+    </dl>
+</div>
+<div class="accounts">
+    <h1>My Accounts</h1>
+    @Html.ActionLink("Create account", "Create", "Account", new { userID = Model.UserID })
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Number</th>
+                <th>Type</th>
+                <th>Currency</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var a in Model.Accounts)
+            {
+            <tr>
+                <td>@a.Number</td>
+                <td>@a.AccountType</td>
+                <td>@a.Currency</td>
+                <td>
+                    <div class="action-link">
+                        @Html.ActionLink("Details", "ShowDetails", "Account", new { id = a.AccountID })
+                    </div>
+                </td>
+                <td>@Html.ActionLink("Delete", "Delete", "Account", new { id = a.AccountID, a.UserID })</td>
+                <td>@Html.ActionLink("Edit", "Edit", "Account", new { id = a.AccountID, a.UserID })</td>
+            </tr>
+            }
+        </tbody>
+    </table>
+
+</div>
+
+
+

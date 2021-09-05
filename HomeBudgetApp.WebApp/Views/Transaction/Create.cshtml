@@ -1,0 +1,104 @@
+﻿@model HomeBudgetApp.WebApp.Models.TransactionCreateModel
+
+@{
+    ViewData["Title"] = "Create";
+}
+@section Style{
+    <link rel="stylesheet" href="~/css/details.css" />
+}
+<h1>New payment</h1>
+<hr />
+<div class="row">
+    <form asp-action="Create" class="payment">
+        <div>
+            <input hidden asp-for="Transaction.AccountID" class="form-control" value="@Model.AccountID" />
+            <div class="form-group">
+                <label asp-for="Transaction.DateTime" class="control-label">Date</label>
+                <input readonly type="datetime" asp-for="Transaction.DateTime" class="form-control" value="@Model.Now" />
+                <span asp-validation-for="Transaction.DateTime" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="AccountNumber" class="control-label">From account</label>
+                <input disabled asp-for="AccountNumber" class="form-control" value="@Model.AccountNumber" />
+                <span asp-validation-for="AccountNumber" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="RecipientAccountNumber" class="control-label">Recipient Account number</label>
+                <input asp-for="RecipientAccountNumber" class="form-control" />
+                <span asp-validation-for="RecipientAccountNumber" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Transaction.RecipientName" class="control-label"></label>
+                <input asp-for="Transaction.RecipientName" class="form-control" />
+                <span asp-validation-for="Transaction.RecipientName" class="text-danger"></span>
+            </div>
+        </div>
+        <div>
+            <div class="form-group">
+                <label asp-for="Transaction.RecipientAddress" class="control-label"></label>
+                <input asp-for="Transaction.RecipientAddress" class="form-control" />
+                <span asp-validation-for="Transaction.RecipientAddress" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Transaction.Purpose" class="control-label"></label>
+                <input asp-for="Transaction.Purpose" class="form-control" />
+                <span asp-validation-for="Transaction.Purpose" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Transaction.Model" class="control-label"></label>
+                <input asp-for="Transaction.Model" class="form-control" />
+            </div>
+            <div class="form-group">
+                <label asp-for="Transaction.ReferenceNumber" class="control-label">Reference Number</label>
+                <input asp-for="Transaction.ReferenceNumber" class="form-control" />
+                <span asp-validation-for="Transaction.ReferenceNumber" class="text-danger"></span>
+            </div>
+        </div>
+        <div class="final-column">
+            <div class="form-group">
+                <label asp-for="Transaction.Amount" class="control-label"></label>
+                <input asp-for="Transaction.Amount" class="form-control" />
+            </div>
+            <div class="form-group">
+                <label class="control-label">Categories:</label>
+                @Html.DropDownList("Category", Model.Categories, new { @class = "form-control", @id = "category-select" })
+            </div>
+            <button class="btn-dark" id="add-category">Add category</button>
+            <table class="table" id="categories">
+                <thead>
+                    <tr>
+                        <th>Num</th>
+                        <th>CategoryID</th>
+                        <th>Name</th>
+                    </tr>
+                </thead>
+                <tbody>
+                </tbody>
+            </table>
+            <div class="form-group create">
+                <input type="submit" value="Create" class="btn btn-primary" />
+            </div>
+
+        </div>
+    </form>
+    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+</div>
+@section Scripts{
+    <script>
+        $('#add-category').click(function (e) {
+            e.preventDefault();
+
+            $.ajax({
+                url: '@Url.ActionLink("AddCategory", "Transaction")',
+                method: 'post',
+                data: { CategoryID: $('#category-select').val(), Num: $('#categories tbody tr').length, OwnerID: @Model.AccountID },
+                success: function (data) {
+                    $('#categories tbody').append(data);
+                },
+                error: function () {
+                    alert("Error");
+                }
+            });
+        });
+    </script>
+}

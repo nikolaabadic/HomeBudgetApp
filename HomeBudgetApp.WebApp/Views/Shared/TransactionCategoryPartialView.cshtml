@@ -1,0 +1,10 @@
+﻿@model HomeBudgetApp.WebApp.Models.TransactionCategoryModel
+<tr>
+    <td>@(Model.Num + 1)</td>
+    <td>
+        @Model.CategoryID
+        <input hidden value="@Model.CategoryID" name="Transaction.Categories[@Model.Num].CategoryID" />
+        <input hidden value="@Model.OwnerID" name="Transaction.Categories[@Model.Num].OwnerID" />
+    </td>
+    <td>@Model.Name</td>
+</tr>

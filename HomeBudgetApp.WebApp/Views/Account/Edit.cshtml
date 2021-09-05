@@ -1,0 +1,43 @@
+﻿@model HomeBudgetApp.WebApp.Models.AccountDetailsModel
+
+@{
+    ViewData["Title"] = "Edit";
+}
+@section Style{
+    <link rel="stylesheet" href="~/css/details.css" />
+}
+<h1>Edit Account</h1>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Edit">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                <input hidden asp-for="OwnerAccountID" class="form-control" value="@Model.OwnerAccountID" />
+            </div>
+            <div class="form-group">
+                <label asp-for="Currency" class="control-label"></label>
+                <div class="combo-box">
+                    @Html.DropDownListFor(model => model.Currency, Enum.GetNames(typeof(HomeBudgetApp.Domain.Currency)).Select(e => new SelectListItem { Text = e }))
+                </div>
+                <span asp-validation-for="Currency" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="AccountType" class="control-label"></label>
+                <div class="combo-box">
+                    @Html.DropDownListFor(model => model.AccountType, Enum.GetNames(typeof(HomeBudgetApp.Domain.AccountType)).Select(e => new SelectListItem { Text = e }))
+                </div>
+                <span asp-validation-for="AccountType" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Number" class="control-label"></label>
+                <input asp-for="Number" class="form-control" />
+                <span asp-validation-for="Number" class="text-danger"></span>
+            </div>
+            <input hidden asp-for="UserID" class="form-control" value="@Model.UserID" />
+            <div class="form-group">
+                <input type="submit" value="Edit" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>

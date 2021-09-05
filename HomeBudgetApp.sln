@@ -7,6 +7,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HomeBudgetApp.Domain", "Hom
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HomeBudgetApp.Data", "HomeBudgetApp.Data\HomeBudgetApp.Data.csproj", "{EB865963-9DAB-40CE-B69B-BD7ACBF95DF9}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HomeBudgetApp.WebApp", "HomeBudgetApp.WebApp\HomeBudgetApp.WebApp.csproj", "{F3121CDD-C790-44A6-A630-86BDA4EB9947}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +23,10 @@ Global
 		{EB865963-9DAB-40CE-B69B-BD7ACBF95DF9}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{EB865963-9DAB-40CE-B69B-BD7ACBF95DF9}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{EB865963-9DAB-40CE-B69B-BD7ACBF95DF9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F3121CDD-C790-44A6-A630-86BDA4EB9947}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F3121CDD-C790-44A6-A630-86BDA4EB9947}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F3121CDD-C790-44A6-A630-86BDA4EB9947}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F3121CDD-C790-44A6-A630-86BDA4EB9947}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

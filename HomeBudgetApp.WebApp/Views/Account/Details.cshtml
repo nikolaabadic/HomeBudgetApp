@@ -1,0 +1,174 @@
+﻿@model HomeBudgetApp.WebApp.Models.AccountDetailsModel
+@using System.Linq
+@using Newtonsoft.Json
+
+@{
+    ViewData["Title"] = "Details";
+}
+@section Style{
+    <link rel="stylesheet" href="~/css/details.css" />
+}
+
+<h1>Account Details</h1>
+
+<div class="account-details">
+    <dl class="row account-row">
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Currency)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Currency)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.AccountType)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.AccountType)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Number)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Number)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Amount)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Amount)
+        </dd>
+    </dl>
+    <img class="card-img" src="~/img/card.png" />
+    <div class="credit-cards">
+        @if (Model.PaymentCards == null || Model.PaymentCards.Count == 0)
+        {
+            <h4>No credit cards connected to this account.</h4>
+        }
+        else
+        {
+            <h4>Credit cards connected to this account</h4>
+            foreach (var c in Model.PaymentCards)
+            {
+            <div class="d-flex justify-content-between">
+                <h5>@c.PaymentCardNumber</h5>
+                @Html.ActionLink("Delete", "Delete", "PaymentCard", new { id = Model.OwnerAccountID, c.PaymentCardID })
+            </div>
+            }
+        }
+    <div class="btn-add-container">@Html.ActionLink("Add new Card", "Create", "PaymentCard", new { id = Model.OwnerAccountID })</div>
+    </div>
+
+</div>
+<hr />
+<div id="charts">
+    @if (Model.IncomeCategory != null && Model.IncomeLabels != null && Model.IncomeLabels.Count != 0 && Model.IncomeCategory.Count != 0)
+    {
+        <div class="chart-container">
+            <h3>Income</h3>
+            <canvas id="pie_chart_income"></canvas>
+        </div>
+    }
+    @if (Model.ExpenseCategory != null && Model.ExpenseLabels != null && Model.ExpenseLabels.Count != 0 && Model.ExpenseCategory.Count != 0)
+    {
+        <div class="chart-container">
+            <h3>Expense</h3>
+            <canvas id="pie_chart_expense"></canvas>
+        </div>
+    }
+</div>
+<hr />
+<div>
+    <h1>Transactions</h1>
+    <div class="btn-add-container">
+        <a asp-action="Create" asp-controller="Transaction" class="ml-5">Add new Transaction</a>
+        @Html.ActionLink("Search transactions", "Search", "Transaction")
+    </div>
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th></th>
+                <th>Amount</th>
+                <th>DateTime</th>
+                <th>Purpose</th>
+                <th>Sender</th>
+                <th>Recipient</th>
+                <th></th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var p in Model.Transactions)
+            {
+                <tr>
+                    @if (p.AccountID == Model.OwnerAccountID)
+                    {
+                        <td><img class="payment-icon" src="~/img/minus.png" /></td>
+                    }
+                    else
+                    {
+                        <td><img class="payment-icon" src="~/img/plus.png" /></td>
+                    }
+                    <td>@p.Amount</td>
+                    <td>@p.DateTime</td>
+                    <td>@p.Purpose</td>
+                    <td>@Model.Accounts.Find(a => a.AccountID == p.AccountID).Number</td>
+                    <td>@Model.Accounts.Find(a => a.AccountID == p.RecipientID).Number</td>
+                    <td>@Html.ActionLink("Details", "ShowDetails", "Transaction", new { id = p.TransactionID, p.AccountID, p.RecipientID, Model.OwnerAccountID })</td>
+                    <td>@Html.ActionLink("Edit", "ShowEdit", "Transaction", new { id = p.TransactionID, p.AccountID, p.RecipientID, Model.OwnerAccountID })</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.min.js"></script>
+<script type="text/javascript">
+    var incomeLabels = @Html.Raw(JsonConvert.SerializeObject(Model.IncomeLabels));
+    var incomeValues = @Html.Raw(JsonConvert.SerializeObject(Model.IncomeCategory));
+    var expenseLabels = @Html.Raw(JsonConvert.SerializeObject(Model.ExpenseLabels));
+    var expenseValues = @Html.Raw(JsonConvert.SerializeObject(Model.ExpenseCategory));
+
+    var ctx = document.getElementById('pie_chart_income').getContext('2d');
+    var barChartIncome = new Chart(ctx, {
+        type: 'pie',
+        data: {
+            labels: incomeLabels,
+            datasets: [{
+                data: incomeValues,
+                backgroundColor: ['rgba(27,110,194)', '#33A1C9', '#38B0DE', '#6996AD', '#8DB6CD', '#A4D3EE', '#4A708B', '#4682B4', '#0D4F8B']
+            }]
+        },
+        options: {
+            scales: {
+                yAxes: [{
+                    display: false
+                }],
+                xAxes: [{
+                    display: false
+                }]
+            }
+        }
+    });
+
+    var ctxEx = document.getElementById('pie_chart_expense').getContext('2d');
+    var barChartExpense = new Chart(ctxEx, {
+        type: 'pie',
+        data: {
+            labels: expenseLabels,
+            datasets: [{
+                data: expenseValues,
+                backgroundColor: ['rgba(27,110,194)', '#33A1C9', '#38B0DE', '#6996AD', '#8DB6CD', '#A4D3EE', '#4A708B', '#4682B4','#0D4F8B']
+            }]
+        },
+        options: {
+            scales: {
+                yAxes: [{
+                    display: false
+                }],
+                xAxes: [{
+                    display: false
+                }]
+            }
+        }
+    });
+</script>

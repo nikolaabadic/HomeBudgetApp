@@ -1,0 +1,111 @@
+﻿body {
+    background-color: gainsboro;
+    height: 90vh;
+    background-size: cover;
+    background-position: center;
+    font-family: 'Roboto', sans-serif;
+}
+.user-info{
+    display: flex;
+}
+img{
+    height: 75px;
+    width:auto;
+    padding-bottom:15px;
+}
+.row {
+    padding-left: 20px;
+    color: black !important;
+}
+h1 {
+    color: black !important;
+    padding-bottom: 30px;
+}
+.accounts{
+    margin-top:20px;
+}
+.accounts h1{
+    padding-bottom:30px;
+}
+
+.footer .container {
+    color: black !important;
+}
+.table{
+    background-color:whitesmoke;
+}
+.account-details{
+    display:flex;
+    align-items:flex-start;
+    color: black !important;
+}
+.account-row {
+    flex-grow: 6;
+}
+.card-img{
+    height:100px;
+    width:auto;
+}
+.payment{
+    width: 1000px !important;
+    display:flex;
+    justify-content:space-between;
+}
+.final-column{
+    display:flex;
+    flex-direction:column;
+}
+#add-category,#add-category-edit{
+    margin-bottom:20px;
+    align-self:flex-end;
+}
+.create {
+    align-self: flex-end;
+}
+h3,h4,dd,dt{
+    color:black !important;    
+}
+.payment-details {
+    width: 1000px !important;
+    display: flex;
+}
+.details-categories {
+    margin-left:250px;
+}
+.btn-add-container{
+    display:flex;
+    flex-direction:row-reverse;
+    margin-bottom:10px;
+}
+.btn-add {
+    text-decoration: none;
+}
+.payment-icon{
+    height:40px;
+    width:auto;
+    vertical-align:text-bottom;
+}
+.footer {
+    position: relative;
+}
+.combo-box{
+    width:200px;
+}
+#charts {
+    padding-top: 50px;
+    padding-bottom: 80px;
+    display: flex;
+    justify-content: space-around;
+}
+.chart-container {
+    display: flex;
+    flex-direction: column;
+    align-items:center;
+}
+canvas{
+    height:220px;
+    width:auto;
+}
+.search-container{
+    padding-bottom:20px;
+}
