@@ -142,6 +142,33 @@ namespace HomeBudgetApp.WebApp.Controllers
             return RedirectToAction("ShowDetails", "Account", new { id });
         }
 
+        [LoggedInUser]
+        public ActionResult CreateFromTemplate(TransactionFromTemplateModel m)
+        {
+            List<Category> list = unitOfWork.Category.GetAll();
+            List<SelectListItem> categories = list.Select(c => new SelectListItem { Text = c.Name, Value = c.CategoryID.ToString() }).ToList();
+
+            Account account = unitOfWork.Account.Search(a => a.Number.Equals(m.AccountNumber))[0];
+
+            TransactionCreateModel createModel = new TransactionCreateModel
+            {
+                AccountID = account.AccountID,
+                Categories = categories,
+                AccountNumber = m.AccountNumber,
+                RecipientAccountNumber = m.AccountNumber,
+                Transaction = new Transaction
+                {
+                    RecipientName = m.RecipientName,
+                    RecipientAddress = m.RecipientAddress,
+                    Purpose = m.Purpose,
+                    Model = m.Model,
+                    ReferenceNumber = m.ReferenceNumber,
+                    Amount = m.Amount
+                }
+            };
+            return View("Create", createModel);
+        }
+
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult Create(TransactionCreateModel model)
@@ -186,6 +213,27 @@ namespace HomeBudgetApp.WebApp.Controllers
 
                 unitOfWork.Transaction.Add(model.Transaction);
                 unitOfWork.Commit();
+                if (model.CreateTemplate)
+                {
+                    Transaction t = new Transaction
+                    {
+                        Purpose = model.Transaction.Purpose,
+                        Model = model.Transaction.Model,
+                        ReferenceNumber = model.Transaction.ReferenceNumber,
+                        Amount = model.Transaction.Amount,
+                        RecipientName = model.Transaction.RecipientName,
+                        RecipientAddress = model.Transaction.RecipientAddress,
+                    };
+                    HttpContext.Session.Set("transaction", JsonSerializer.SerializeToUtf8Bytes(t));
+                    TemplateCreateModel newModel = new TemplateCreateModel
+                    {
+
+                        RecipientAccountNumber = model.RecipientAccountNumber,
+                        AccountNumber = model.AccountNumber
+
+                    };
+                    return RedirectToAction("Create", "Template",newModel);
+                }
                 return RedirectToAction("ShowDetails", "Account", new { id = model.Transaction.AccountID });
             }
             catch (Exception ex)

@@ -16,7 +16,7 @@ namespace HomeBudgetApp.Domain
         public int Model { get; set; }
         public string ReferenceNumber { get; set; }
         public double Amount { get; set; }
-        public string Type { get; set; }
+        public string AccountNumber { get; set; }
         public string Name { get; set; }
         public int CategoryID { get; set; }
         public Category Category { get; set; }

@@ -4,14 +4,16 @@ using HomeBudgetApp.Domain;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace HomeBudgetApp.Domain.Migrations.HomeBudget
 {
     [DbContext(typeof(HomeBudgetContext))]
-    partial class HomeBudgetContextModelSnapshot : ModelSnapshot
+    [Migration("20210905204848_Alter_table_Templates")]
+    partial class Alter_table_Templates
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

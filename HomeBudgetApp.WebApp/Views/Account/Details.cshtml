@@ -81,7 +81,8 @@
     <h1>Transactions</h1>
     <div class="btn-add-container">
         <a asp-action="Create" asp-controller="Transaction" class="ml-5">Add new Transaction</a>
-        @Html.ActionLink("Search transactions", "Search", "Transaction")
+        <span class="ml-5">@Html.ActionLink("Search transactions", "Search", "Transaction")</span> 
+
     </div>
 
     <table class="table">
