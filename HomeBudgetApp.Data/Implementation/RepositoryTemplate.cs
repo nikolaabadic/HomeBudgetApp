@@ -26,7 +26,7 @@ namespace HomeBudgetApp.Data.Implementation
 
         public Template FindByID(int id, params int[] ids)
         {
-            return context.Templates.Find(id);
+            return context.Templates.Find(id);            
         }
 
         public List<Template> GetAll()
@@ -37,6 +37,10 @@ namespace HomeBudgetApp.Data.Implementation
         public List<Template> Search(Expression<Func<Template, bool>> pred)
         {
             return context.Templates.Where(pred).ToList();            
+        }
+        public void Edit(Template template)
+        {
+            context.Templates.Update(template);
         }
     }
 }

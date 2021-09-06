@@ -19,11 +19,7 @@ namespace HomeBudgetApp.WebApp.Models
         public int UserID { get; set; }
         public DateTime Now = DateTime.UtcNow;
         public string AccountNumber { get; set; }
-        public string RecipientName { get; set; }
-        public string RecipientAddress { get; set; }
-        public string Purpose { get; set; }
-        public int Model { get; set; }
-        public string ReferenceNumber { get; set; }
-        public double Amount { get; set; }
+        public Template Template { get; set; }
+
     }
 }

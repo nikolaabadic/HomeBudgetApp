@@ -1,0 +1,72 @@
+﻿@model HomeBudgetApp.WebApp.Models.TemplateCreateModel
+
+@{
+    ViewData["Title"] = "Edit";
+}
+@section Style{
+    <link rel="stylesheet" href="~/css/details.css" />
+}
+<h1>Edit template</h1>
+<hr />
+<div class="row">
+    <form asp-action="Edit" class="payment">
+        <div>
+            <input hidden asp-for="Template.TemplateID" class="form-control" value="@Model.Template.TemplateID" />
+            <input hidden asp-for="UserID" class="form-control" value="@Model.UserID" />
+            <div class="form-group">
+                <label asp-for="Template.AccountNumber" class="control-label">From account</label>
+                <input asp-for="Template.AccountNumber" class="form-control" value="@Model.Template.AccountNumber" />
+                <span asp-validation-for="Template.AccountNumber" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Template.RecipientAccountNumber" class="control-label">Recipient Account number</label>
+                <input asp-for="Template.RecipientAccountNumber" class="form-control" value="@Model.Template.RecipientAccountNumber" />
+                <span asp-validation-for="Template.RecipientAccountNumber" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Template.RecipientName" class="control-label"></label>
+                <input asp-for="Template.RecipientName" class="form-control" value="@Model.Template.RecipientName" />
+                <span asp-validation-for="Template.RecipientName" class="text-danger"></span>
+            </div>
+        </div>
+        <div>
+            <div class="form-group">
+                <label asp-for="Template.RecipientAddress" class="control-label"></label>
+                <input asp-for="Template.RecipientAddress" class="form-control" value="@Model.Template.RecipientAddress" />
+                <span asp-validation-for="Template.RecipientAddress" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Template.Purpose" class="control-label"></label>
+                <input asp-for="Template.Purpose" class="form-control" value="@Model.Template.Purpose" />
+                <span asp-validation-for="Template.Purpose" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Template.Model" class="control-label"></label>
+                <input asp-for="Template.Model" class="form-control" value="@Model.Template.Model" />
+            </div>
+            <div class="form-group">
+                <label asp-for="Template.ReferenceNumber" class="control-label">Reference Number</label>
+                <input asp-for="Template.ReferenceNumber" class="form-control" value="@Model.Template.ReferenceNumber" />
+                <span asp-validation-for="Template.ReferenceNumber" class="text-danger"></span>
+            </div>
+        </div>
+        <div class="final-column">
+            <div class="form-group">
+                <label asp-for="Template.Amount" class="control-label"></label>
+                <input asp-for="Template.Amount" class="form-control" value=@Model.Template.Amount />
+            </div>
+            <div class="form-group">
+                <label asp-for="Template.CategoryID" class="control-label">Category:</label>
+                @Html.DropDownListFor(model => model.Template.CategoryID, Model.Categories)
+            </div>
+            <div class="form-group">
+                <label asp-for="Template.Name" class="control-label"></label>
+                <input asp-for="Template.Name" class="form-control" value="@Model.Template.Name"/>
+            </div>
+            <div class="form-group create">
+                <input type="submit" value="Edit" class="btn btn-primary" />
+            </div>
+        </div>
+    </form>
+    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+</div>

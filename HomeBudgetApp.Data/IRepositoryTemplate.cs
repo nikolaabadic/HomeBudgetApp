@@ -9,5 +9,6 @@ namespace HomeBudgetApp.Data
     public interface IRepositoryTemplate : IRepository<Template>
     {
         public List<Template> Search(Expression<Func<Template, bool>> pred);
+        public void Edit(Template template);
     }
 }

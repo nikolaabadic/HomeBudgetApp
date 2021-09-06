@@ -24,31 +24,34 @@
     <tbody>
         @foreach (var item in Model.Templates)
         {
-            <tr>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Name)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => Model.Categories.Single(c => c.CategoryID == item.CategoryID).Name)
-                </td>
-                <td>
-                    @Html.ActionLink("Create a Transaction", "CreateFromTemplate", "Transaction",
-                        new HomeBudgetApp.WebApp.Models.TransactionFromTemplateModel
-                        {
-                            RecipientName = item.RecipientName,
-                            RecipientAddress = item.RecipientAddress,
-                            Model = item.Model,
-                            Purpose = item.Purpose,
-                            ReferenceNumber = item.ReferenceNumber,
-                            Amount = item.Amount,
-                            RecipientAccountNumber = item.RecipientAccountNumber,
-                            AccountNumber = item.AccountNumber
-                        })
-                </td>
-                <td>
-                    @Html.ActionLink("Delete Template","Delete", "Template", new { id = item.TemplateID })
-                </td>
-            </tr>
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.Name)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => Model.Categories.Single(c => c.CategoryID == item.CategoryID).Name)
+            </td>
+            <td>
+                @Html.ActionLink("Create a Transaction", "CreateFromTemplate", "Transaction",
+                    new HomeBudgetApp.WebApp.Models.TransactionFromTemplateModel
+                    {
+                        RecipientName = item.RecipientName,
+                        RecipientAddress = item.RecipientAddress,
+                        Model = item.Model,
+                        Purpose = item.Purpose,
+                        ReferenceNumber = item.ReferenceNumber,
+                        Amount = item.Amount,
+                        RecipientAccountNumber = item.RecipientAccountNumber,
+                        AccountNumber = item.AccountNumber
+                    })
+            </td>
+            <td>
+                @Html.ActionLink("Delete Template", "Delete", "Template", new { id = item.TemplateID })
+            </td>
+            <td>
+                @Html.ActionLink("Edit", "Edit", "Template", new { id = item.TemplateID })
+            </td>
+        </tr>
         }
     </tbody>
 </table>

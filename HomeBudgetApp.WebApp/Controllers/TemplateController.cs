@@ -24,7 +24,7 @@ namespace HomeBudgetApp.WebApp.Controllers
         public ActionResult Index()
         {
             int id = (int)HttpContext.Session.GetInt32("userid");
-            List<Template> templates = unitOfWork.Template.Search(t => t.UserID == id);
+            List<Template> templates = unitOfWork.Template.Search(t => t.UserID == id).OrderBy(t => t.Name).ToList();
             List<Category> categories = unitOfWork.Category.GetAll();
             return View(new TemplatesModel{
                 Templates = templates,
@@ -93,6 +93,41 @@ namespace HomeBudgetApp.WebApp.Controllers
             unitOfWork.Commit();
 
             return RedirectToAction("Index");
+        }
+
+        public ActionResult Edit(int id)
+        {
+            int userID = (int)HttpContext.Session.GetInt32("userid");
+            Template template = unitOfWork.Template.FindByID(id);
+            List<SelectListItem> categories = unitOfWork.Category.GetAll()
+                .Select(c => new SelectListItem { Text = c.Name, Value = c.CategoryID.ToString() }).ToList();
+            return View(new TemplateCreateModel
+            {
+                UserID = userID,
+                Template = template,
+                Categories = categories
+            }); ;
+        }
+
+        [HttpPost]
+        public ActionResult Edit(TemplateCreateModel m)
+        {
+            List<Template> templates = unitOfWork.Template.Search(t =>
+                t.UserID == m.UserID && t.Name == m.Template.Name);
+            if (templates == null || templates.Count == 0)
+            {
+                m.Template.UserID = m.UserID;
+                unitOfWork.Template.Edit(m.Template);
+                unitOfWork.Commit();
+                return RedirectToAction("Index");
+            }
+            else
+            {
+                ModelState.AddModelError(string.Empty, "Please enter a unique template name.");
+                m.Categories = unitOfWork.Category.GetAll()
+                .Select(c => new SelectListItem { Text = c.Name, Value = c.CategoryID.ToString() }).ToList();
+                return View(m);
+            }
         }
     }
 }
