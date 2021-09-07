@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace HomeBudgetApp.Domain.Migrations.HomeBudget
 {
-    public partial class initial_migration : Migration
+    public partial class Initial_migration : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -77,7 +77,7 @@ namespace HomeBudgetApp.Domain.Migrations.HomeBudget
                     Model = table.Column<int>(type: "int", nullable: false),
                     ReferenceNumber = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Amount = table.Column<double>(type: "float", nullable: false),
-                    Type = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    AccountNumber = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Name = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     CategoryID = table.Column<int>(type: "int", nullable: false)
                 },
@@ -126,10 +126,12 @@ namespace HomeBudgetApp.Domain.Migrations.HomeBudget
                     TransactionID = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     DateTime = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    AccountID = table.Column<int>(type: "int", nullable: false),
-                    RecipientID = table.Column<int>(type: "int", nullable: false),
+                    AccountID = table.Column<int>(type: "int", nullable: true),
+                    AccountNumber = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    RecipientID = table.Column<int>(type: "int", nullable: true),
                     RecipientName = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     RecipientAddress = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    RecipientAccountNumber = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Purpose = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Model = table.Column<int>(type: "int", nullable: false),
                     ReferenceNumber = table.Column<string>(type: "nvarchar(max)", nullable: true),
@@ -154,6 +156,31 @@ namespace HomeBudgetApp.Domain.Migrations.HomeBudget
                         column: x => x.RecipientID,
                         principalTable: "Accounts",
                         principalColumn: "AccountID",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "TransactionAccounts",
+                columns: table => new
+                {
+                    AccountID = table.Column<int>(type: "int", nullable: false),
+                    TransactionID = table.Column<int>(type: "int", nullable: false),
+                    Hidden = table.Column<bool>(type: "bit", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_TransactionAccounts", x => new { x.AccountID, x.TransactionID });
+                    table.ForeignKey(
+                        name: "FK_TransactionAccounts_Accounts_AccountID",
+                        column: x => x.AccountID,
+                        principalTable: "Accounts",
+                        principalColumn: "AccountID",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_TransactionAccounts_Transactions_TransactionID",
+                        column: x => x.TransactionID,
+                        principalTable: "Transactions",
+                        principalColumn: "TransactionID",
                         onDelete: ReferentialAction.Restrict);
                 });
 
@@ -219,6 +246,11 @@ namespace HomeBudgetApp.Domain.Migrations.HomeBudget
                 column: "UserID");
 
             migrationBuilder.CreateIndex(
+                name: "IX_TransactionAccounts_TransactionID",
+                table: "TransactionAccounts",
+                column: "TransactionID");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_TransactionCategories_TransactionID",
                 table: "TransactionCategories",
                 column: "TransactionID");
@@ -241,6 +273,9 @@ namespace HomeBudgetApp.Domain.Migrations.HomeBudget
 
             migrationBuilder.DropTable(
                 name: "Templates");
+
+            migrationBuilder.DropTable(
+                name: "TransactionAccounts");
 
             migrationBuilder.DropTable(
                 name: "TransactionCategories");

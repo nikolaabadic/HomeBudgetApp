@@ -10,8 +10,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace HomeBudgetApp.Domain.Migrations.HomeBudget
 {
     [DbContext(typeof(HomeBudgetContext))]
-    [Migration("20210905173157_initial_migration")]
-    partial class initial_migration
+    [Migration("20210907204502_Initial_migration")]
+    partial class Initial_migration
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -114,6 +114,9 @@ namespace HomeBudgetApp.Domain.Migrations.HomeBudget
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
+                    b.Property<string>("AccountNumber")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<double>("Amount")
                         .HasColumnType("float");
 
@@ -141,9 +144,6 @@ namespace HomeBudgetApp.Domain.Migrations.HomeBudget
                     b.Property<string>("ReferenceNumber")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("Type")
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<int>("UserID")
                         .HasColumnType("int");
 
@@ -163,8 +163,11 @@ namespace HomeBudgetApp.Domain.Migrations.HomeBudget
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<int>("AccountID")
+                    b.Property<int?>("AccountID")
                         .HasColumnType("int");
+
+                    b.Property<string>("AccountNumber")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<double>("Amount")
                         .HasColumnType("float");
@@ -181,10 +184,13 @@ namespace HomeBudgetApp.Domain.Migrations.HomeBudget
                     b.Property<string>("Purpose")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("RecipientAccountNumber")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("RecipientAddress")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("RecipientID")
+                    b.Property<int?>("RecipientID")
                         .HasColumnType("int");
 
                     b.Property<string>("RecipientName")
@@ -203,6 +209,24 @@ namespace HomeBudgetApp.Domain.Migrations.HomeBudget
                     b.HasIndex("RecipientID");
 
                     b.ToTable("Transactions");
+                });
+
+            modelBuilder.Entity("HomeBudgetApp.Domain.TransactionAccount", b =>
+                {
+                    b.Property<int>("AccountID")
+                        .HasColumnType("int");
+
+                    b.Property<int>("TransactionID")
+                        .HasColumnType("int");
+
+                    b.Property<bool>("Hidden")
+                        .HasColumnType("bit");
+
+                    b.HasKey("AccountID", "TransactionID");
+
+                    b.HasIndex("TransactionID");
+
+                    b.ToTable("TransactionAccounts");
                 });
 
             modelBuilder.Entity("HomeBudgetApp.Domain.TransactionCategory", b =>
@@ -333,14 +357,12 @@ namespace HomeBudgetApp.Domain.Migrations.HomeBudget
                     b.HasOne("HomeBudgetApp.Domain.Account", "Account")
                         .WithMany("TransactionsTo")
                         .HasForeignKey("AccountID")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
+                        .OnDelete(DeleteBehavior.Restrict);
 
                     b.HasOne("HomeBudgetApp.Domain.Account", "Recipient")
                         .WithMany("TransactionsFrom")
                         .HasForeignKey("RecipientID")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
+                        .OnDelete(DeleteBehavior.Restrict);
 
                     b.OwnsOne("HomeBudgetApp.Domain.PaymentCard", "PaymentCard", b1 =>
                         {
@@ -373,6 +395,25 @@ namespace HomeBudgetApp.Domain.Migrations.HomeBudget
                     b.Navigation("Recipient");
                 });
 
+            modelBuilder.Entity("HomeBudgetApp.Domain.TransactionAccount", b =>
+                {
+                    b.HasOne("HomeBudgetApp.Domain.Account", "Account")
+                        .WithMany("Transactions")
+                        .HasForeignKey("AccountID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("HomeBudgetApp.Domain.Transaction", "Transaction")
+                        .WithMany("Accounts")
+                        .HasForeignKey("TransactionID")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Account");
+
+                    b.Navigation("Transaction");
+                });
+
             modelBuilder.Entity("HomeBudgetApp.Domain.TransactionCategory", b =>
                 {
                     b.HasOne("HomeBudgetApp.Domain.Category", "Category")
@@ -394,6 +435,8 @@ namespace HomeBudgetApp.Domain.Migrations.HomeBudget
 
             modelBuilder.Entity("HomeBudgetApp.Domain.Account", b =>
                 {
+                    b.Navigation("Transactions");
+
                     b.Navigation("TransactionsFrom");
 
                     b.Navigation("TransactionsTo");
@@ -406,6 +449,8 @@ namespace HomeBudgetApp.Domain.Migrations.HomeBudget
 
             modelBuilder.Entity("HomeBudgetApp.Domain.Transaction", b =>
                 {
+                    b.Navigation("Accounts");
+
                     b.Navigation("Categories");
                 });
 #pragma warning restore 612, 618

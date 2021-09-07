@@ -14,6 +14,7 @@ namespace HomeBudgetApp.Domain
         public DbSet<Transaction> Transactions { get; set; }
         public DbSet<TransactionCategory> TransactionCategories { get; set; }
         public DbSet<Template> Templates { get; set; }
+        public DbSet<TransactionAccount> TransactionAccounts { get; set; }
 
         public static readonly ILoggerFactory MyLoggerFactory = LoggerFactory.Create(builder => { builder.AddConsole(); });
 
@@ -38,6 +39,12 @@ namespace HomeBudgetApp.Domain
             {
                 c.HasKey(c => new { c.CategoryID, c.TransactionID, c.OwnerID });
                 c.HasOne(b => b.Transaction).WithMany(p => p.Categories).OnDelete(DeleteBehavior.Restrict);
+            });
+
+            modelBuilder.Entity<TransactionAccount>(c =>
+            {
+                c.HasKey(c => new { c.AccountID, c.TransactionID });
+                c.HasOne(b => b.Transaction).WithMany(p => p.Accounts).OnDelete(DeleteBehavior.Restrict);
             });
 
             modelBuilder.Entity<Transaction>().OwnsOne(t => t.PaymentCard);

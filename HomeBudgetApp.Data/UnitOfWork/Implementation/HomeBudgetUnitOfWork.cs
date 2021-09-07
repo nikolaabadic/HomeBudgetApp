@@ -19,6 +19,7 @@ namespace HomeBudgetApp.Data.UnitOfWork.Implementation
             Category = new RepositoryCategory(context);
             TransactionCategory = new RepositoryTransactionCategory(context);
             Template = new RepositoryTemplate(context);
+            TransactionAccount = new RepositoryTransactionAccount(context);
         }
 
         public IRepositoryUser User { get; set; }
@@ -26,6 +27,7 @@ namespace HomeBudgetApp.Data.UnitOfWork.Implementation
         public IRepositoryTransaction Transaction { get; set; }
         public IRepositoryCategory Category { get; set; }
         public IRepositoryTransactionCategory TransactionCategory { get; set; }
+        public IRepositoryTransactionAccount TransactionAccount { get; set; }
         public IRepositoryTemplate Template { get; set; }
 
         public void Commit()

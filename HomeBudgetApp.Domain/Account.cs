@@ -32,5 +32,6 @@ namespace HomeBudgetApp.Domain
             public List<PaymentCard> PaymentCards { get; set; }
             public List<Transaction> TransactionsFrom { get; set; }
             public List<Transaction> TransactionsTo { get; set; }
+            public List<TransactionAccount> Transactions { get; set; }
         }
 }

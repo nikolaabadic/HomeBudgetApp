@@ -11,6 +11,7 @@ namespace HomeBudgetApp.Data.UnitOfWork
         public IRepositoryTransaction Transaction { get; set; }
         public IRepositoryCategory Category { get; set; }
         public IRepositoryTransactionCategory TransactionCategory { get; set; }
+        public IRepositoryTransactionAccount TransactionAccount { get; set; }
         public IRepositoryTemplate Template { get; set; }
         void Commit();
     }

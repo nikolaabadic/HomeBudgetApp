@@ -24,5 +24,6 @@ namespace HomeBudgetApp.Domain
         public int? PaymentCardID { get; set; }
         public PaymentCard PaymentCard { get; set; }
         public List<TransactionCategory> Categories { get; set; }
+        public List<TransactionAccount> Accounts { get; set; }
     }
 }

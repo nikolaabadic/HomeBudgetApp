@@ -11,5 +11,6 @@ namespace HomeBudgetApp.Data
         public List<Transaction> Search(Expression<Func<Transaction, bool>> pred);
         public void UpdateCategoryList(Transaction transaction, List<TransactionCategory> categories);
         public void Edit(Transaction transaction);
+        public int CreateAndReturnID(Transaction transaction);
     }
 }

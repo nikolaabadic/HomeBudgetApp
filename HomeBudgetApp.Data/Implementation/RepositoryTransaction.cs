@@ -57,5 +57,12 @@ namespace HomeBudgetApp.Data.Implementation
         {
             context.Transactions.Update(transaction);
         }
+
+        public int CreateAndReturnID(Transaction transaction)
+        {
+            context.Transactions.Add(transaction);
+            context.SaveChanges();
+            return transaction.TransactionID;
+        }
     }
 }

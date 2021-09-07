@@ -209,6 +209,24 @@ namespace HomeBudgetApp.Domain.Migrations.HomeBudget
                     b.ToTable("Transactions");
                 });
 
+            modelBuilder.Entity("HomeBudgetApp.Domain.TransactionAccount", b =>
+                {
+                    b.Property<int>("AccountID")
+                        .HasColumnType("int");
+
+                    b.Property<int>("TransactionID")
+                        .HasColumnType("int");
+
+                    b.Property<bool>("Hidden")
+                        .HasColumnType("bit");
+
+                    b.HasKey("AccountID", "TransactionID");
+
+                    b.HasIndex("TransactionID");
+
+                    b.ToTable("TransactionAccounts");
+                });
+
             modelBuilder.Entity("HomeBudgetApp.Domain.TransactionCategory", b =>
                 {
                     b.Property<int>("CategoryID")
@@ -375,6 +393,25 @@ namespace HomeBudgetApp.Domain.Migrations.HomeBudget
                     b.Navigation("Recipient");
                 });
 
+            modelBuilder.Entity("HomeBudgetApp.Domain.TransactionAccount", b =>
+                {
+                    b.HasOne("HomeBudgetApp.Domain.Account", "Account")
+                        .WithMany("Transactions")
+                        .HasForeignKey("AccountID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("HomeBudgetApp.Domain.Transaction", "Transaction")
+                        .WithMany("Accounts")
+                        .HasForeignKey("TransactionID")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Account");
+
+                    b.Navigation("Transaction");
+                });
+
             modelBuilder.Entity("HomeBudgetApp.Domain.TransactionCategory", b =>
                 {
                     b.HasOne("HomeBudgetApp.Domain.Category", "Category")
@@ -396,6 +433,8 @@ namespace HomeBudgetApp.Domain.Migrations.HomeBudget
 
             modelBuilder.Entity("HomeBudgetApp.Domain.Account", b =>
                 {
+                    b.Navigation("Transactions");
+
                     b.Navigation("TransactionsFrom");
 
                     b.Navigation("TransactionsTo");
@@ -408,6 +447,8 @@ namespace HomeBudgetApp.Domain.Migrations.HomeBudget
 
             modelBuilder.Entity("HomeBudgetApp.Domain.Transaction", b =>
                 {
+                    b.Navigation("Accounts");
+
                     b.Navigation("Categories");
                 });
 #pragma warning restore 612, 618

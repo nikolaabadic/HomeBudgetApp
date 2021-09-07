@@ -54,8 +54,13 @@ namespace HomeBudgetApp.WebApp.Controllers
                     model.Number = account.Number;
 
                     double amount = 0;
+
+                    List<TransactionAccount> visibleTransactions = unitOfWork.TransactionAccount.Search(t => t.AccountID == account.AccountID && !t.Hidden);
                     List<Transaction> paymentsFrom = unitOfWork.Transaction.Search(p => p.RecipientID == account.AccountID);
+                    paymentsFrom = paymentsFrom.Where(t => visibleTransactions.Any(p => p.TransactionID == t.TransactionID)).ToList();
+
                     List<Transaction> paymentsTo = unitOfWork.Transaction.Search(p => p.AccountID == account.AccountID);
+                    paymentsTo = paymentsTo.Where(t => visibleTransactions.Any(p => p.TransactionID == t.TransactionID)).ToList();
 
                     List<ChartCategory> chartCategoriesIncome = new List<ChartCategory>();
                     List<ChartCategory> chartCategoriesExpense = new List<ChartCategory>();

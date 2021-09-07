@@ -211,8 +211,35 @@ namespace HomeBudgetApp.WebApp.Controllers
                     throw new Exception("Payment amount can't be 0!");
                 }
 
-                unitOfWork.Transaction.Add(model.Transaction);
+                if(model.Transaction.DateTime == new DateTime())
+                {
+                    model.Transaction.DateTime = DateTime.UtcNow;
+                }
+
+                int transactionID = unitOfWork.Transaction.CreateAndReturnID(model.Transaction);
+                
+                if(model.Transaction.AccountID != null)
+                {
+                    unitOfWork.TransactionAccount.Add(new TransactionAccount
+                    {
+                        TransactionID = transactionID,
+                        AccountID = (int)model.Transaction.AccountID,
+                        Hidden = false
+                    });
+                }
+
+                if (model.Transaction.RecipientID != null)
+                {
+                    unitOfWork.TransactionAccount.Add(new TransactionAccount
+                    {
+                        TransactionID = transactionID,
+                        AccountID = (int)model.Transaction.RecipientID,
+                        Hidden = false
+                    });
+                }
+
                 unitOfWork.Commit();
+
                 if (model.CreateTemplate)
                 {
                     Transaction t = new Transaction
@@ -412,6 +439,16 @@ namespace HomeBudgetApp.WebApp.Controllers
             HttpContext.Session.Set("model", JsonSerializer.SerializeToUtf8Bytes(model));
 
             return Json(new { redirectToUrl = Url.Action("Search") });
+        }
+
+        [HttpPost]
+        public ActionResult Delete(int transactionID, int accountID)
+        {
+            TransactionAccount obj = unitOfWork.TransactionAccount.FindByID(accountID, transactionID);
+            obj.Hidden = true;
+            unitOfWork.TransactionAccount.Edit(obj);
+            unitOfWork.Commit();
+            return Json(new { redirectToUrl = Url.Action("Details", "Account") });
         }
     }
 }
