@@ -50,8 +50,6 @@ namespace HomeBudgetApp.WebApp.Controllers
                 model.Transaction = unitOfWork.Transaction.FindByID((int)id);
                 model.Transaction.Categories = belongings;
                 model.Categories = unitOfWork.Category.GetAll();
-                model.AccountNumber = unitOfWork.Account.Search(a => a.AccountID == accountID)[0].Number;
-                model.RecipientNumber = unitOfWork.Account.Search(a => a.AccountID == recipientID)[0].Number;
                 return View(model);
             }
             return RedirectToAction("Details", "Account");
@@ -73,7 +71,7 @@ namespace HomeBudgetApp.WebApp.Controllers
                 unitOfWork.Commit();
                 return PartialView("TransactionCategoryPartialView", model);
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 ModelState.AddModelError(string.Empty, "Error adding categories!");
                 return View("Edit");
@@ -103,7 +101,7 @@ namespace HomeBudgetApp.WebApp.Controllers
                 unitOfWork.Commit();
                 return PartialView("TransactionCategoryPartialView", model);
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 ModelState.AddModelError(string.Empty, "Error adding categories!");
                 return PartialView("ErrorPatrialView");
@@ -121,7 +119,7 @@ namespace HomeBudgetApp.WebApp.Controllers
                 unitOfWork.Commit();
                 return RedirectToAction("Details", "Account");
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 return RedirectToAction("Details", "Account");
             }
@@ -279,16 +277,12 @@ namespace HomeBudgetApp.WebApp.Controllers
                 List<Category> categories = unitOfWork.Category.GetAll();
                 List<SelectListItem> list = categories.Select(c => new SelectListItem { Text = c.Name, Value = c.CategoryID.ToString() }).ToList();
 
-                string accountNum = unitOfWork.Account.FindByID((int)accountID).Number;
-                string recipientNum = unitOfWork.Account.FindByID((int)recipientID).Number;
                 TransactionCreateModel model = new TransactionCreateModel
                 {
                     AccountID = (int)ownerAccountID,
                     Transaction = transaction,
                     Categories = list,
-                    CategoryList = categories,
-                    AccountNumber = accountNum,
-                    RecipientAccountNumber = recipientNum
+                    CategoryList = categories
                 };
                 return View(model);
             }
@@ -302,17 +296,51 @@ namespace HomeBudgetApp.WebApp.Controllers
             try
             {
                 unitOfWork.Transaction.UpdateCategoryList(model.Transaction, model.Transaction.Categories);
-
                 Transaction transaction = unitOfWork.Transaction.FindByID(model.Transaction.TransactionID);
+
+
+                if(model.Transaction.AccountNumber != transaction.AccountNumber)
+                {
+                    Account account = unitOfWork.Account.FindByNumber(model.Transaction.AccountNumber);
+                    transaction.AccountNumber = model.Transaction.AccountNumber;
+                    if (account == null)
+                    {                        
+                        transaction.AccountID = null;
+                    }
+                    else
+                    {                        
+                        transaction.AccountID = account.AccountID;
+                    }
+                }
+
+                if(model.Transaction.RecipientAccountNumber != transaction.RecipientAccountNumber)
+                {
+                    Account recipient = unitOfWork.Account.FindByNumber(model.Transaction.RecipientAccountNumber);
+                    transaction.RecipientAccountNumber = model.Transaction.RecipientAccountNumber;
+                    if(recipient == null)
+                    {
+                        transaction.RecipientID = null;
+                    }
+                    else
+                    {
+                        transaction.RecipientID = recipient.AccountID;
+                    }
+                }
+
+                transaction.DateTime = model.Transaction.DateTime;
                 transaction.RecipientName = model.Transaction.RecipientName;
                 transaction.RecipientAddress = model.Transaction.RecipientAddress;
                 transaction.Purpose = model.Transaction.Purpose;
+                transaction.Model = model.Transaction.Model;
+                transaction.ReferenceNumber = model.Transaction.ReferenceNumber;
+                transaction.Amount = model.Transaction.Amount;
+
                 unitOfWork.Transaction.Edit(transaction);
                 unitOfWork.Commit();
                 int id = model.AccountID;
                 return RedirectToAction("ShowDetails", "Account", new { id });
             }
-            catch
+            catch(Exception)
             {
                 ModelState.AddModelError(string.Empty, "Error editing categories!");
                 return RedirectToAction("Edit");

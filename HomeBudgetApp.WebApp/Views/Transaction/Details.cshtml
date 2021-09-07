@@ -12,17 +12,17 @@
 <div class="payment-details">
     <dl>
         <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.AccountNumber)
+            @Html.DisplayNameFor(model => model.Transaction.AccountNumber)
         </dt>
         <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.AccountNumber)
+            @Html.DisplayFor(model => model.Transaction.AccountNumber)
         </dd>
         <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.RecipientNumber)
+            @Html.DisplayNameFor(model => model.Transaction.RecipientAccountNumber)
         </dt>
         </dd>
         <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.RecipientNumber)
+            @Html.DisplayFor(model => model.Transaction.RecipientAccountNumber)
         </dd>
         <dt class="col-sm-2">
             @Html.DisplayNameFor(model => model.Transaction.RecipientName)

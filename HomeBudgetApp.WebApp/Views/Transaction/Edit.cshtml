@@ -12,18 +12,18 @@
     <form asp-action="Edit" class="payment">
         <div>
             <div class="form-group">
-                <label asp-for="AccountNumber" class="control-label"> Account number</label>
-                <input readonly asp-for="AccountNumber" class="form-control" value="@Model.AccountNumber" />
-                <span asp-validation-for="AccountNumber" class="text-danger"></span>
+                <label asp-for="Transaction.AccountNumber" class="control-label"> Account number</label>
+                <input asp-for="Transaction.AccountNumber" class="form-control" value="@Model.Transaction.AccountNumber" />
+                <span asp-validation-for="Transaction.AccountNumber" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="RecipientAccountNumber" class="control-label">Recipient Account Number</label>
-                <input readonly asp-for="RecipientAccountNumber" class="form-control" value="@Model.RecipientAccountNumber" />
-                <span asp-validation-for="RecipientAccountNumber" class="text-danger"></span>
+                <label asp-for="Transaction.RecipientAccountNumber" class="control-label">Recipient Account Number</label>
+                <input asp-for="Transaction.RecipientAccountNumber" class="form-control" value="@Model.Transaction.RecipientAccountNumber" />
+                <span asp-validation-for="Transaction.RecipientAccountNumber" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <label asp-for="Transaction.DateTime" class="control-label">Date</label>
-                <input type="text" readonly asp-for="Transaction.DateTime" class="form-control" value="@Model.Transaction.DateTime" />
+                <input type="date" asp-for="Transaction.DateTime" class="form-control" value="@Model.Transaction.DateTime.ToString("yyyy-MM-dd")" />
                 <span asp-validation-for="Transaction.DateTime" class="text-danger"></span>
             </div>
             <div class="form-group">
@@ -51,19 +51,19 @@
             </div>
             <div class="form-group">
                 <label asp-for="Transaction.Model" class="control-label"></label>
-                <input readonly asp-for="Transaction.Model" class="form-control" value="@Model.Transaction.Model" />
+                <input asp-for="Transaction.Model" class="form-control" value="@Model.Transaction.Model" />
                 <span asp-validation-for="Transaction.Model" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <label asp-for="Transaction.ReferenceNumber" class="control-label">Reference Number</label>
-                <input readonly asp-for="Transaction.ReferenceNumber" class="form-control" value="@Model.Transaction.ReferenceNumber" />
+                <input asp-for="Transaction.ReferenceNumber" class="form-control" value="@Model.Transaction.ReferenceNumber" />
                 <span asp-validation-for="Transaction.ReferenceNumber" class="text-danger"></span>
             </div>
         </div>
         <div class="final-column">
             <div class="form-group">
                 <label asp-for="Transaction.Amount" class="control-label"></label>
-                <input readonly asp-for="Transaction.Amount" class="form-control" value="@Model.Transaction.Amount" />
+                <input asp-for="Transaction.Amount" class="form-control" value="@Model.Transaction.Amount" />
                 <span asp-validation-for="Transaction.Amount" class="text-danger"></span>
             </div>
             <div class="form-group">
