@@ -102,7 +102,7 @@
             @foreach (var p in Model.Transactions)
             {
                 <tr>
-                    @if (p.AccountID == Model.OwnerAccountID)
+                    @if (p.Type == "expense")
                     {
                         <td><img class="payment-icon" src="~/img/minus.png" /></td>
                     }
@@ -113,8 +113,8 @@
                     <td>@p.Amount</td>
                     <td>@p.DateTime</td>
                     <td>@p.Purpose</td>
-                    <td>@Model.Accounts.Find(a => a.AccountID == p.AccountID).Number</td>
-                    <td>@Model.Accounts.Find(a => a.AccountID == p.RecipientID).Number</td>
+                    <td>@p.AccountNumber</td>
+                    <td>@p.RecipientAccountNumber</td>
                     <td>@Html.ActionLink("Details", "ShowDetails", "Transaction", new { id = p.TransactionID, p.AccountID, p.RecipientID, Model.OwnerAccountID })</td>
                     <td>@Html.ActionLink("Edit", "ShowEdit", "Transaction", new { id = p.TransactionID, p.AccountID, p.RecipientID, Model.OwnerAccountID })</td>
                 </tr>

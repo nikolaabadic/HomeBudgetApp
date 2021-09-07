@@ -53,8 +53,8 @@
             <td>@t.Amount</td>
             <td>@t.DateTime</td>
             <td>@t.Purpose</td>
-            <td>@Model.Accounts.Find(a => a.AccountID == t.AccountID).Number</td>
-            <td>@Model.Accounts.Find(a => a.AccountID == t.RecipientID).Number</td>
+            <td>@t.AccountNumber</td>
+            <td>@t.RecipientAccountNumber</td>
             <td>@Html.ActionLink("Details", "ShowDetails", "Transaction", new { id = t.TransactionID, t.AccountID, t.RecipientID, Model.OwnerAccountID })</td>
             <td>@Html.ActionLink("Edit", "ShowEdit", "Transaction", new { id = t.TransactionID, t.AccountID, t.RecipientID, Model.OwnerAccountID })</td>
         </tr>

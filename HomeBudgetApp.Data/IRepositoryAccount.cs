@@ -10,5 +10,6 @@ namespace HomeBudgetApp.Data
     {
         public List<Account> Search(Expression<Func<Account, bool>> pred);
         public void Edit(Account account);
+        public Account FindByNumber(string number);
     }
 }

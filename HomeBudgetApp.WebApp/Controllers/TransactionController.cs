@@ -177,34 +177,36 @@ namespace HomeBudgetApp.WebApp.Controllers
             {
                 try
                 {
-                    Account recipient = unitOfWork.Account.Search(a => a.Number == model.RecipientAccountNumber)[0];
-                    model.Transaction.RecipientID = recipient.AccountID;
+                    Account recipient = unitOfWork.Account.FindByNumber(model.RecipientAccountNumber);
+                    if(recipient != null)
+                    {
+                        model.Transaction.RecipientID = recipient.AccountID;
+                        model.Transaction.RecipientAccountNumber = recipient.Number;
+                    }
+                    else
+                    {
+                        model.Transaction.RecipientAccountNumber = model.RecipientAccountNumber;
+                    }
 
-                    Account account = unitOfWork.Account.FindByID(model.Transaction.AccountID);
-                    if (account.Currency != recipient.Currency)
+                    Account account = unitOfWork.Account.FindByNumber(model.AccountNumber);
+                    if(account != null)
+                    {
+                        model.Transaction.AccountID = account.AccountID;
+                        model.Transaction.AccountNumber = account.Number;
+                    }else
+                    {
+                        model.Transaction.AccountNumber = model.AccountNumber;
+                    }
+
+                    if (account!= null && recipient != null && account.Currency != recipient.Currency)
                     {
                         throw new FormatException();
-                    }
-                    byte[] amountByte = HttpContext.Session.Get("amount");
-                    double amount = JsonSerializer.Deserialize<double>(amountByte);
-                    if (model.Transaction.Amount > amount)
-                    {
-                        //throw new ApplicationException();
                     }
                 }
                 catch (FormatException)
                 {
                     throw new Exception("The recipient account you entered is in another currency!");
                 }
-                catch (ApplicationException)
-                {
-                    throw new Exception("There is not enough money on the account for this payment!");
-                }
-                catch (Exception)
-                {
-                    throw new Exception("Invalid recipient account number!");
-                }
-
 
                 if (model.Transaction.Amount == 0)
                 {
@@ -234,7 +236,7 @@ namespace HomeBudgetApp.WebApp.Controllers
                     };
                     return RedirectToAction("Create", "Template",newModel);
                 }
-                return RedirectToAction("ShowDetails", "Account", new { id = model.Transaction.AccountID });
+                return RedirectToAction("ShowDetails", "Account", new { id = model.AccountID });
             }
             catch (Exception ex)
             {
@@ -243,8 +245,8 @@ namespace HomeBudgetApp.WebApp.Controllers
                 int? id = HttpContext.Session.GetInt32("accountid");
                 return View("Create", new TransactionCreateModel
                 {
-                    AccountID = model.Transaction.AccountID,
-                    AccountNumber = unitOfWork.Account.Search(a => a.AccountID == (int)id)[0].Number,
+                    AccountID = model.AccountID,
+                    AccountNumber = model.AccountNumber,
                     Categories = unitOfWork.Category.GetAll().Select(c => new SelectListItem
                     {
                         Text = c.Name,
@@ -332,12 +334,10 @@ namespace HomeBudgetApp.WebApp.Controllers
                 {
                     OwnerAccountID = id,
                     Transactions = finalList,
-                    Accounts = unitOfWork.Account.GetAll()
                 };
                 return View("Search", model);
             } 
             AccountDetailsModel result = JsonSerializer.Deserialize<AccountDetailsModel>(modelByte);
-            result.Accounts = unitOfWork.Account.GetAll();
             return View("Search", result);
         }
 
@@ -364,11 +364,11 @@ namespace HomeBudgetApp.WebApp.Controllers
 
             if (type == 1)
             {
-                transactions = transactions.Where(t => t.RecipientID == id).ToList();
+                transactions = transactions.Where(t => t.Type == "income").ToList();
             }
             if(type == 2)
             {
-                transactions = transactions.Where(t => t.AccountID == id).ToList();
+                transactions = transactions.Where(t => t.Type == "expense").ToList();
             }
 
             if(int.Parse(DateOrder) == 2)

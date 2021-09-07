@@ -4,14 +4,16 @@ using HomeBudgetApp.Domain;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace HomeBudgetApp.Domain.Migrations.HomeBudget
 {
     [DbContext(typeof(HomeBudgetContext))]
-    partial class HomeBudgetContextModelSnapshot : ModelSnapshot
+    [Migration("20210907143214_Alter_transactions_table_added_account_number")]
+    partial class Alter_transactions_table_added_account_number
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -161,7 +163,7 @@ namespace HomeBudgetApp.Domain.Migrations.HomeBudget
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<int?>("AccountID")
+                    b.Property<int>("AccountID")
                         .HasColumnType("int");
 
                     b.Property<string>("AccountNumber")
@@ -337,7 +339,8 @@ namespace HomeBudgetApp.Domain.Migrations.HomeBudget
                     b.HasOne("HomeBudgetApp.Domain.Account", "Account")
                         .WithMany("TransactionsTo")
                         .HasForeignKey("AccountID")
-                        .OnDelete(DeleteBehavior.Restrict);
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
 
                     b.HasOne("HomeBudgetApp.Domain.Account", "Recipient")
                         .WithMany("TransactionsFrom")

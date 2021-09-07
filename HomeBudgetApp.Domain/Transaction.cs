@@ -8,12 +8,14 @@ namespace HomeBudgetApp.Domain
     {
         public int TransactionID { get; set; }
         public DateTime DateTime { get; set; }
-        public int AccountID { get; set; }
+        public int? AccountID { get; set; }
         public Account Account { get; set; }
-        public int RecipientID { get; set; }
+        public string AccountNumber { get; set; }
+        public int? RecipientID { get; set; }
         public Account Recipient { get; set; }
         public string RecipientName { get; set; }
         public string RecipientAddress { get; set; }
+        public string RecipientAccountNumber { get; set; }
         public string Purpose { get; set; }
         public int Model { get; set; }
         public string ReferenceNumber { get; set; }

@@ -13,7 +13,6 @@ namespace HomeBudgetApp.WebApp.Models
         public AccountType AccountType { get; set; }
         public string Number { get; set; }
         public double Amount { get; set; }
-        public List<Account> Accounts { get; set; }
         public List<PaymentCard> PaymentCards { get; set; }
         public List<Transaction> Transactions { get; set; }
         public string Username { get; set; }

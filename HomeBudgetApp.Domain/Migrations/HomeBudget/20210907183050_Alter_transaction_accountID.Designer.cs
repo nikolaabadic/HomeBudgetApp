@@ -4,14 +4,16 @@ using HomeBudgetApp.Domain;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace HomeBudgetApp.Domain.Migrations.HomeBudget
 {
     [DbContext(typeof(HomeBudgetContext))]
-    partial class HomeBudgetContextModelSnapshot : ModelSnapshot
+    [Migration("20210907183050_Alter_transaction_accountID")]
+    partial class Alter_transaction_accountID
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

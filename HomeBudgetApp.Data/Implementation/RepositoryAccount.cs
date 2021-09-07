@@ -43,5 +43,18 @@ namespace HomeBudgetApp.Data.Implementation
         {
             context.Accounts.Update(account);
         }
+
+        public Account FindByNumber(string number)
+        {
+            try
+            {
+                Account account = context.Accounts.Single(a => a.Number == number);
+                return account;
+            } catch (Exception)
+            {
+                return null;
+            }
+
+        }
     }
 }

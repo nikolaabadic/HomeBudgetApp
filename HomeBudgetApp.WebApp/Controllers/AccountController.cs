@@ -52,7 +52,6 @@ namespace HomeBudgetApp.WebApp.Controllers
                     model.AccountType = account.AccountType;
                     model.Currency = account.Currency;
                     model.Number = account.Number;
-                    model.Accounts = unitOfWork.Account.GetAll();
 
                     double amount = 0;
                     List<Transaction> paymentsFrom = unitOfWork.Transaction.Search(p => p.RecipientID == account.AccountID);
