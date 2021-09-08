@@ -23,45 +23,45 @@
             </div>
             <div class="form-group">
                 <label asp-for="AccountNumber" class="control-label">From account</label>
-                <input asp-for="AccountNumber" class="form-control" value="@Model.AccountNumber" id="account-number" readonly/>
+                <input required asp-for="AccountNumber" class="form-control" value="@Model.AccountNumber" id="account-number" readonly/>
                 <span asp-validation-for="AccountNumber" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <label asp-for="RecipientAccountNumber" class="control-label">Recipient Account number</label>
-                <input asp-for="RecipientAccountNumber" class="form-control" id="recipient-number" />
+                <input required asp-for="RecipientAccountNumber" class="form-control" id="recipient-number" />
                 <span asp-validation-for="RecipientAccountNumber" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <label asp-for="Transaction.RecipientName" class="control-label"></label>
-                <input asp-for="Transaction.RecipientName" class="form-control" />
+                <input required asp-for="Transaction.RecipientName" class="form-control" />
                 <span asp-validation-for="Transaction.RecipientName" class="text-danger"></span>
             </div>
         </div>
         <div>
             <div class="form-group">
                 <label asp-for="Transaction.RecipientAddress" class="control-label"></label>
-                <input asp-for="Transaction.RecipientAddress" class="form-control" />
+                <input required asp-for="Transaction.RecipientAddress" class="form-control" />
                 <span asp-validation-for="Transaction.RecipientAddress" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <label asp-for="Transaction.Purpose" class="control-label"></label>
-                <input asp-for="Transaction.Purpose" class="form-control" />
+                <input required asp-for="Transaction.Purpose" class="form-control" />
                 <span asp-validation-for="Transaction.Purpose" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <label asp-for="Transaction.Model" class="control-label"></label>
-                <input asp-for="Transaction.Model" class="form-control" />
+                <input required asp-for="Transaction.Model" class="form-control" />
             </div>
             <div class="form-group">
                 <label asp-for="Transaction.ReferenceNumber" class="control-label">Reference Number</label>
-                <input asp-for="Transaction.ReferenceNumber" class="form-control" />
+                <input required asp-for="Transaction.ReferenceNumber" class="form-control" />
                 <span asp-validation-for="Transaction.ReferenceNumber" class="text-danger"></span>
             </div>
         </div>
         <div class="final-column">
             <div class="form-group">
                 <label asp-for="Transaction.Amount" class="control-label"></label>
-                <input asp-for="Transaction.Amount" class="form-control" />
+                <input required asp-for="Transaction.Amount" class="form-control" />
             </div>
             <div class="form-group">
                 <label class="control-label">Categories:</label>
