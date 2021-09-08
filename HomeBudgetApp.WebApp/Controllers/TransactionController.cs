@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using HomeBudgetApp.WebApp.Filters;
+using Newtonsoft.Json;
 
 namespace HomeBudgetApp.WebApp.Controllers
 {
@@ -248,7 +249,7 @@ namespace HomeBudgetApp.WebApp.Controllers
                         AccountNumber = model.Transaction.AccountNumber,
                         RecipientAccountNumber = model.Transaction.RecipientAccountNumber
                     };
-                    HttpContext.Session.Set("transaction", JsonSerializer.SerializeToUtf8Bytes(t));
+                    HttpContext.Session.Set("transaction", System.Text.Json.JsonSerializer.SerializeToUtf8Bytes(t));
 
                     return RedirectToAction("Create", "Template");
                 }
@@ -322,12 +323,30 @@ namespace HomeBudgetApp.WebApp.Controllers
                     Account account = unitOfWork.Account.FindByNumber(model.Transaction.AccountNumber);
                     transaction.AccountNumber = model.Transaction.AccountNumber;
                     if (account == null)
-                    {                        
+                    {
+                        if (transaction.AccountID != null)
+                        {
+                            TransactionAccount obj = unitOfWork.TransactionAccount.FindByID((int)transaction.AccountID, transaction.TransactionID);
+                            obj.Hidden = true;
+                            unitOfWork.TransactionAccount.Edit(obj);
+                        }
                         transaction.AccountID = null;
                     }
                     else
                     {                        
                         transaction.AccountID = account.AccountID;
+
+                        TransactionAccount obj = unitOfWork.TransactionAccount.FindByID(account.AccountID, transaction.TransactionID);
+                        if (obj == null)
+                        {
+                            unitOfWork.TransactionAccount.Add(new TransactionAccount { AccountID = account.AccountID, TransactionID = transaction.TransactionID, Hidden = false });
+                        }
+                        else
+                        {
+                            obj.Hidden = false;
+                            unitOfWork.TransactionAccount.Edit(obj);
+                        }
+
                     }
                 }
 
@@ -337,11 +356,28 @@ namespace HomeBudgetApp.WebApp.Controllers
                     transaction.RecipientAccountNumber = model.Transaction.RecipientAccountNumber;
                     if(recipient == null)
                     {
-                        transaction.RecipientID = null;
+                        if(transaction.RecipientID != null)
+                        {
+                            TransactionAccount obj = unitOfWork.TransactionAccount.FindByID((int)transaction.RecipientID, transaction.TransactionID);
+                            obj.Hidden = true;
+                            unitOfWork.TransactionAccount.Edit(obj);
+                        }
+                        transaction.RecipientID = null;                        
                     }
                     else
                     {
                         transaction.RecipientID = recipient.AccountID;
+
+                        TransactionAccount obj = unitOfWork.TransactionAccount.FindByID(recipient.AccountID, transaction.TransactionID);
+                        if(obj == null)
+                        {
+                            unitOfWork.TransactionAccount.Add(new TransactionAccount { AccountID = recipient.AccountID, TransactionID = transaction.TransactionID, Hidden = false });
+                        }
+                        else
+                        {
+                            obj.Hidden = false;
+                            unitOfWork.TransactionAccount.Edit(obj);
+                        }
                     }
                 }
 
@@ -366,25 +402,30 @@ namespace HomeBudgetApp.WebApp.Controllers
         }
 
         [HttpGet]
-        public ActionResult Search()
+        public ActionResult Search(AccountDetailsModel model)
         {
             int id = (int)HttpContext.Session.GetInt32("accountid");
+            model.OwnerAccountID = id;
 
-            byte[] modelByte = HttpContext.Session.Get("model");
-            if (modelByte == null)
+            if (TempData["model"] is string s)
             {
+                var result = Newtonsoft.Json.JsonConvert.DeserializeObject<AccountDetailsModel>(s);   
+                result.OwnerAccountID = id;
+                return View("Search", result);
+            }
+            else 
+            { 
+                List<TransactionAccount> visibleTransactions = unitOfWork.TransactionAccount.Search(t => t.AccountID == id && !t.Hidden);
                 List<Transaction> paymentsFrom = unitOfWork.Transaction.Search(p => p.RecipientID == id);
+                paymentsFrom = paymentsFrom.Where(t => visibleTransactions.Any(p => p.TransactionID == t.TransactionID)).ToList();
+
                 List<Transaction> paymentsTo = unitOfWork.Transaction.Search(p => p.AccountID == id);
+                paymentsTo = paymentsTo.Where(t => visibleTransactions.Any(p => p.TransactionID == t.TransactionID)).ToList();
                 List<Transaction> finalList = paymentsFrom.Concat(paymentsTo).ToList().OrderBy(p => p.DateTime).Reverse().ToList();
-                AccountDetailsModel model = new AccountDetailsModel
-                {
-                    OwnerAccountID = id,
-                    Transactions = finalList,
-                };
+                
+                model.Transactions = finalList; 
                 return View("Search", model);
             } 
-            AccountDetailsModel result = JsonSerializer.Deserialize<AccountDetailsModel>(modelByte);
-            return View("Search", result);
         }
 
 
@@ -421,15 +462,23 @@ namespace HomeBudgetApp.WebApp.Controllers
             {
                 transactions = transactions.OrderBy(t => t.DateTime).ToList();
             }
+
+            List<TransactionAccount> visibleTransactions = unitOfWork.TransactionAccount.Search(t => t.AccountID == id && !t.Hidden);
+            transactions = transactions.Where(t => visibleTransactions.Any(p => p.TransactionID == t.TransactionID)).ToList();
+            
             AccountDetailsModel model = new AccountDetailsModel
             {
                 OwnerAccountID = id,
                 Transactions = transactions,
                 Query = Param
             };
-            HttpContext.Session.Set("model", JsonSerializer.SerializeToUtf8Bytes(model));
 
-            return Json(new { redirectToUrl = Url.Action("Search") });
+            TempData["model"] = Newtonsoft.Json.JsonConvert.SerializeObject(model, 
+                new JsonSerializerSettings()
+                {
+                    ReferenceLoopHandling = ReferenceLoopHandling.Ignore
+                });
+            return Json(new { redirectToUrl = Url.Action("Search", "Transaction") });
         }
 
         [HttpPost]

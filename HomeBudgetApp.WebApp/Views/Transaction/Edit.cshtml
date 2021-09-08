@@ -13,12 +13,26 @@
         <div>
             <div class="form-group">
                 <label asp-for="Transaction.AccountNumber" class="control-label"> Account number</label>
-                <input required asp-for="Transaction.AccountNumber" class="form-control" value="@Model.Transaction.AccountNumber" />
+                @if (Model.Transaction.AccountID == Model.AccountID)
+                {
+                    <input readonly asp-for="Transaction.AccountNumber" class="form-control" value="@Model.Transaction.AccountNumber" />
+                }
+                else
+                {
+                    <input required asp-for="Transaction.AccountNumber" class="form-control" value="@Model.Transaction.AccountNumber" />
+                }
                 <span asp-validation-for="Transaction.AccountNumber" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <label asp-for="Transaction.RecipientAccountNumber" class="control-label">Recipient Account Number</label>
-                <input required asp-for="Transaction.RecipientAccountNumber" class="form-control" value="@Model.Transaction.RecipientAccountNumber" />
+                @if (Model.Transaction.RecipientID == Model.AccountID)
+                {
+                    <input readonly asp-for="Transaction.RecipientAccountNumber" class="form-control" value="@Model.Transaction.RecipientAccountNumber" />
+                }
+                else
+                {
+                    <input required asp-for="Transaction.RecipientAccountNumber" class="form-control" value="@Model.Transaction.RecipientAccountNumber" />
+                }
                 <span asp-validation-for="Transaction.RecipientAccountNumber" class="text-danger"></span>
             </div>
             <div class="form-group">

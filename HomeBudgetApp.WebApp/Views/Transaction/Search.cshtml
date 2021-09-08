@@ -51,7 +51,7 @@
                 <td><img class="payment-icon" src="~/img/plus.png" /></td>
             }
             <td>@t.Amount</td>
-            <td>@t.DateTime</td>
+            <td>@t.DateTime.Date.ToString("dd/MM/yyyy")</td>
             <td>@t.Purpose</td>
             <td>@t.AccountNumber</td>
             <td>@t.RecipientAccountNumber</td>
@@ -72,7 +72,7 @@
                     method: 'get',
                     data: { Param: $('#param').val(), Type: $('#type').val(), DateOrder: $('#dateOrder').val() },
                     success: function (response) {
-                        window.location.href = response.redirectToUrl;
+                        window.location.href = "Search";
                     },
                     error: function () {
                     alert("Error");

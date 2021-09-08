@@ -111,7 +111,7 @@
                         <td><img class="payment-icon" src="~/img/plus.png" /></td>
                     }
                     <td>@p.Amount</td>
-                    <td>@p.DateTime</td>
+                    <td>@p.DateTime.Date.ToString("dd/MM/yyyy")</td>
                     <td>@p.Purpose</td>
                     <td>@p.AccountNumber</td>
                     <td>@p.RecipientAccountNumber</td>

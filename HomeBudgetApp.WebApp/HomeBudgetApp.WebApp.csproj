@@ -5,6 +5,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\HomeBudgetApp.Data\HomeBudgetApp.Data.csproj" />
     <ProjectReference Include="..\HomeBudgetApp.Domain\HomeBudgetApp.Domain.csproj" />
   </ItemGroup>
