@@ -92,7 +92,7 @@ namespace HomeBudgetApp.WebApp.Controllers
                 model.UserID = user.UserID;
                 model.Name = user.Name;
                 model.Surname = user.Surname;
-                model.Accounts = unitOfWork.Account.Search(a => a.UserID == user.UserID);
+                model.Accounts = unitOfWork.Account.Search(a => a.UserID == user.UserID && !a.Hidden);
             }
 
             return View(model);

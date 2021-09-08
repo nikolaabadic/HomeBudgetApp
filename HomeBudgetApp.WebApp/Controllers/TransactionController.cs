@@ -211,11 +211,6 @@ namespace HomeBudgetApp.WebApp.Controllers
                     throw new Exception("Payment amount can't be 0!");
                 }
 
-                if(model.Transaction.DateTime == new DateTime())
-                {
-                    model.Transaction.DateTime = DateTime.UtcNow;
-                }
-
                 int transactionID = unitOfWork.Transaction.CreateAndReturnID(model.Transaction);
                 
                 if(model.Transaction.AccountID != null)
@@ -250,16 +245,12 @@ namespace HomeBudgetApp.WebApp.Controllers
                         Amount = model.Transaction.Amount,
                         RecipientName = model.Transaction.RecipientName,
                         RecipientAddress = model.Transaction.RecipientAddress,
+                        AccountNumber = model.Transaction.AccountNumber,
+                        RecipientAccountNumber = model.Transaction.RecipientAccountNumber
                     };
                     HttpContext.Session.Set("transaction", JsonSerializer.SerializeToUtf8Bytes(t));
-                    TemplateCreateModel newModel = new TemplateCreateModel
-                    {
 
-                        RecipientAccountNumber = model.RecipientAccountNumber,
-                        AccountNumber = model.AccountNumber
-
-                    };
-                    return RedirectToAction("Create", "Template",newModel);
+                    return RedirectToAction("Create", "Template");
                 }
                 return RedirectToAction("ShowDetails", "Account", new { id = model.AccountID });
             }

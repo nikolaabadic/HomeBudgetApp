@@ -33,5 +33,6 @@ namespace HomeBudgetApp.Domain
             public List<Transaction> TransactionsFrom { get; set; }
             public List<Transaction> TransactionsTo { get; set; }
             public List<TransactionAccount> Transactions { get; set; }
+            public bool Hidden { get; set; }
         }
 }

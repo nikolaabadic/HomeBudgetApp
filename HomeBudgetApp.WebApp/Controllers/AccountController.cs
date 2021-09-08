@@ -197,58 +197,48 @@ namespace HomeBudgetApp.WebApp.Controllers
         [LoggedInUser]
         public ActionResult Create(AccountDetailsModel model)
         {
-            if (!ModelState.IsValid)
+
+            if (model.Number == null)
             {
-                if (model.Number == null || model.Username == null)
-                {
-                    ModelState.AddModelError(string.Empty, "Invalid fields!");
-                    return View();
-                }
+                ModelState.AddModelError(string.Empty, "Invalid fields!");
+                return View(model);
             }
-            try
+            Account accountDB = unitOfWork.Account.FindByNumber(model.Number);
+            if(accountDB != null)
             {
-                try
-                {
-                    Account accountDB = unitOfWork.Account.Search(a => a.Number == model.Number)[0];
-                    ModelState.AddModelError(string.Empty, "Account number must be unique!");
-                    return View();
-                }
-                catch (Exception e)
-                {
-                    int userID = model.UserID;
-                    Account account = new Account
-                    {
-                        Currency = model.Currency,
-                        AccountType = model.AccountType,
-                        Number = model.Number,
-                        Amount = model.Amount,
-                        UserID = userID
-                    };
-                    unitOfWork.Account.Add(account);
-                    unitOfWork.Commit();
-                    return RedirectToAction("Options", "Admin");
-                }
+                ModelState.AddModelError(string.Empty, "Account number must be unique!");
+                return View(model);
             }
-            catch
+
+            int userID = model.UserID;
+            Account account = new Account
             {
-                ModelState.AddModelError(string.Empty, "No user found!");
-                return View();
-            }
+                Currency = model.Currency,
+                AccountType = model.AccountType,
+                Number = model.Number,
+                Amount = model.Amount,
+                UserID = userID
+            };
+            unitOfWork.Account.Add(account);
+            unitOfWork.Commit();
+            return RedirectToAction("Details", "User");
         }
 
-        public ActionResult Delete(int id, int userID)
+        [HttpPost]
+        public ActionResult Delete(int AccountID, int UserID)
         {
             try
             {
-                Account account = unitOfWork.Account.FindByID(id);
-                unitOfWork.Account.Delete(account);
+                Account account = unitOfWork.Account.FindByID(AccountID);
+                account.Hidden = true;
+                unitOfWork.Account.Edit(account);
                 unitOfWork.Commit();
             }
             catch (Exception e)
             {
                 Console.WriteLine(e.StackTrace);
             }
-            return RedirectToAction("ShowDetails", "User", new { id = userID });
+            return Json(new { redirectToUrl = Url.Action("ShowDetails", "User", new { id = UserID }) });
         }
 
         [LoggedInUser]
@@ -274,7 +264,17 @@ namespace HomeBudgetApp.WebApp.Controllers
 
                 account.Currency = model.Currency;
                 account.AccountType = model.AccountType;
-                account.Number = model.Number;
+
+                Account accountDB = unitOfWork.Account.FindByNumber(model.Number);
+                if (accountDB != null)
+                {
+                    ModelState.AddModelError(string.Empty, "Account number must be unique!");
+                    return View(model);
+                }
+                else
+                {
+                    account.Number = model.Number;
+                }
 
                 unitOfWork.Account.Edit(account);
                 unitOfWork.Commit();

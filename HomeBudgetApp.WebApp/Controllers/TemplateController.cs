@@ -64,7 +64,7 @@ namespace HomeBudgetApp.WebApp.Controllers
                 unitOfWork.Template.Add(new Template
                 {
                     User = user,
-                    RecipientAccountNumber = m.RecipientAccountNumber,
+                    RecipientAccountNumber = m.Transaction.RecipientAccountNumber,
                     RecipientName = m.Transaction.RecipientName,
                     RecipientAddress = m.Transaction.RecipientAddress,
                     Purpose = m.Transaction.Purpose,
@@ -73,7 +73,7 @@ namespace HomeBudgetApp.WebApp.Controllers
                     Category = category,
                     Amount = m.Transaction.Amount,
                     Name = m.Name,
-                    AccountNumber = m.AccountNumber
+                    AccountNumber = m.Transaction.AccountNumber
                 });
                 unitOfWork.Commit();
                 return RedirectToAction("Details", "Account");
@@ -114,20 +114,23 @@ namespace HomeBudgetApp.WebApp.Controllers
         {
             List<Template> templates = unitOfWork.Template.Search(t =>
                 t.UserID == m.UserID && t.Name == m.Template.Name);
-            if (templates == null || templates.Count == 0)
+
+            if (templates != null && templates.Count == 1)
             {
-                m.Template.UserID = m.UserID;
-                unitOfWork.Template.Edit(m.Template);
-                unitOfWork.Commit();
-                return RedirectToAction("Index");
+                if(templates[0].TemplateID != m.Template.TemplateID)
+                {
+                    ModelState.AddModelError(string.Empty, "Please enter a unique template name.");
+                    m.Categories = unitOfWork.Category.GetAll()
+                    .Select(c => new SelectListItem { Text = c.Name, Value = c.CategoryID.ToString() }).ToList();
+
+                    return View(m);
+                }
             }
-            else
-            {
-                ModelState.AddModelError(string.Empty, "Please enter a unique template name.");
-                m.Categories = unitOfWork.Category.GetAll()
-                .Select(c => new SelectListItem { Text = c.Name, Value = c.CategoryID.ToString() }).ToList();
-                return View(m);
-            }
+
+            m.Template.UserID = m.UserID;
+            unitOfWork.Template.Edit(m.Template);
+            unitOfWork.Commit();
+            return RedirectToAction("Index");
         }
     }
 }

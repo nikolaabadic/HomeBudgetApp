@@ -13,12 +13,10 @@ namespace HomeBudgetApp.WebApp.Models
         public Transaction Transaction { get; set; }
         public int CategoryID { get; set; }
         public Category Category { get; set; }
-        public string RecipientAccountNumber { get; set; }
         public string Name { get; set; }
         public List<SelectListItem> Categories { get; set; }
         public int UserID { get; set; }
         public DateTime Now = DateTime.UtcNow;
-        public string AccountNumber { get; set; }
         public Template Template { get; set; }
 
     }

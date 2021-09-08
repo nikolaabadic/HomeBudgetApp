@@ -1,4 +1,5 @@
 ﻿using HomeBudgetApp.Domain;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -36,7 +37,7 @@ namespace HomeBudgetApp.Data.Implementation
 
         public List<Template> Search(Expression<Func<Template, bool>> pred)
         {
-            return context.Templates.Where(pred).ToList();            
+            return context.Templates.Where(pred).AsNoTracking().ToList();            
         }
         public void Edit(Template template)
         {

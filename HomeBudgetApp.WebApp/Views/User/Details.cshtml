@@ -49,14 +49,33 @@
                         @Html.ActionLink("Details", "ShowDetails", "Account", new { id = a.AccountID })
                     </div>
                 </td>
-                <td>@Html.ActionLink("Delete", "Delete", "Account", new { id = a.AccountID, a.UserID })</td>
                 <td>@Html.ActionLink("Edit", "Edit", "Account", new { id = a.AccountID, a.UserID })</td>
+                <td><button class="btn btn-light" onclick="deleteAccount(@a.AccountID)">Delete</button></td>
             </tr>
             }
         </tbody>
     </table>
 
 </div>
+@section Scripts{ 
+    <script>
+        const deleteAccount = (id) => {
+        if (confirm('Are you sure you want to delete this account?')){
+            $.ajax({
+                url: '@Url.ActionLink("Delete", "Account")',
+                method: 'post',
+                data: { AccountID: parseInt(id), UserID: @Model.UserID},
+                success: function (response) {
+                    window.location.href = response.redirectToUrl;
+                },
+                error: function () {
+                    alert("Error");
+                }
+            });
+        }
+    }
+    </script>
+}
 
 
 
