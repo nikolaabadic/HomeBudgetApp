@@ -446,9 +446,7 @@ namespace HomeBudgetApp.WebApp.Controllers
                 (t.AccountID == id || t.RecipientID == id) && (
                 t.Purpose.ToLower().Contains(Param.ToLower()) ||
                 t.RecipientName.ToLower().Contains(Param.ToLower()) ||
-                t.RecipientAddress.ToLower().Contains(Param.ToLower()) ||
-                t.Recipient.Number.ToLower().Contains(Param.ToLower()) ||
-                t.Account.Number.ToLower().Contains(Param.ToLower())));
+                t.RecipientAddress.ToLower().Contains(Param.ToLower())));
 
             int type = int.Parse(Type);
             if (String.IsNullOrEmpty(Param))
@@ -461,11 +459,11 @@ namespace HomeBudgetApp.WebApp.Controllers
 
             if (type == 1)
             {
-                transactions = transactions.Where(t => t.Type == "income").ToList();
+                transactions = transactions.Where(t => t.RecipientID == id).ToList();
             }
             if(type == 2)
             {
-                transactions = transactions.Where(t => t.Type == "expense").ToList();
+                transactions = transactions.Where(t => t.AccountID == id).ToList();
             }
 
             if(int.Parse(DateOrder) == 2)

@@ -200,7 +200,7 @@ namespace HomeBudgetApp.WebApp.Controllers
         // POST: AccountController/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        [LoggedInUser]
+    
         public ActionResult Create(AccountDetailsModel model)
         {
 

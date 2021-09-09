@@ -19,8 +19,7 @@ namespace HomeBudgetApp.WebApp.Filters
 
             if (context.HttpContext.Session.GetInt32("userid") == null)
             {
-                context.HttpContext.Response.Redirect("/Home/Index");
-                return;
+                context.Result = new RedirectResult("/Home/Index");
             }
             else
             {

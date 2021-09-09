@@ -41,7 +41,15 @@ namespace HomeBudgetApp.Data.Implementation
 
         public User Search(Expression<Func<User, bool>> pred)
         {
-            return context.Users.Single(pred);
+            try
+            {
+                User user = context.Users.Single(pred);
+                return user;
+            }
+            catch (Exception)
+            {
+                return null;
+            }
         }
         public List<User> SearchUsers(Expression<Func<User, bool>> pred)
         {

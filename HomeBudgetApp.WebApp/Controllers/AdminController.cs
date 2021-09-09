@@ -53,10 +53,5 @@ namespace HomeBudgetApp.WebApp.Controllers
             HttpContext.Session.Clear();
             return RedirectToAction("Index", "Admin");
         }
-        // GET: AdminController/Details/5
-        public ActionResult Details(int id)
-        {
-            return View();
-        }
     }
 }

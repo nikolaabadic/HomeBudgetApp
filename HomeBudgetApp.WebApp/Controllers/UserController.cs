@@ -20,21 +20,18 @@ namespace HomeBudgetApp.WebApp.Controllers
         }
 
         // GET: UserController
-        [LoggedInUser]
-        //[AdminNotLoggedIn]
         public ActionResult Index()
         {
             return View("Login");
         }
         [LoggedInUser]
-        //[AdminNotLoggedIn]
         public ActionResult Logout()
         {
             HttpContext.Session.Clear();
             return RedirectToAction("Index", "Home");
         }
-        //[AdminLoggedIn]
-        [NotLoggedIn]
+        
+
         // GET: AdminController/Create
         public ActionResult Create()
         {
@@ -44,8 +41,6 @@ namespace HomeBudgetApp.WebApp.Controllers
         // POST: AdminController/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        //[AdminLoggedIn]
-        [NotLoggedIn]
         public ActionResult Create(User user)
         {
             if (!ModelState.IsValid)
@@ -55,29 +50,30 @@ namespace HomeBudgetApp.WebApp.Controllers
                     return View();
                 }
             }
-            try
-            {
-                User userDB = unitOfWork.User.Search(u => u.Username == user.Username);
-                ModelState.AddModelError(string.Empty, "Username is already taken!");
-                return View();
-            }
-            catch (Exception)
+
+            User userDB = unitOfWork.User.Search(u => u.Username == user.Username);
+            if (userDB == null)
             {
                 unitOfWork.User.Add(user);
                 unitOfWork.Commit();
                 return RedirectToAction("Index", "Home");
+            } else
+            {
+                ModelState.AddModelError(string.Empty, "Username is already taken!");
+                return View(user);
             }
         }
 
+        [LoggedInUser]
         public ActionResult ShowDetails(int id)
         {
             HttpContext.Session.SetInt32("userid", id);
             return RedirectToAction("Details");
         }
 
-            // GET: UserController/Details/5
-            [LoggedInUser]
-        [AdminNotLoggedIn]
+        // GET: UserController/Details/5
+        [HttpGet]
+        [LoggedInUser]
         public ActionResult Details()
         {
             int? id = HttpContext.Session.GetInt32("userid");
@@ -94,7 +90,6 @@ namespace HomeBudgetApp.WebApp.Controllers
                 model.Surname = user.Surname;
                 model.Accounts = unitOfWork.Account.Search(a => a.UserID == user.UserID && !a.Hidden);
             }
-
             return View(model);
         }
 
