@@ -57,17 +57,17 @@ namespace HomeBudgetApp.WebApp.Controllers
         }
 
         [HttpPost]
-        public ActionResult AddCategory(TransactionCategoryModel request)
+        public ActionResult AddCategory(int CategoryID, int Num, int OwnerID)
         {
             try
             {
-                Category category = unitOfWork.Category.FindByID(request.CategoryID);
+                Category category = unitOfWork.Category.FindByID(CategoryID);
                 TransactionCategoryModel model = new TransactionCategoryModel
                 {
-                    Num = request.Num,
-                    CategoryID = request.CategoryID,
+                    Num = Num,
+                    CategoryID = CategoryID,
                     Name = category.Name,
-                    OwnerID = request.OwnerID
+                    OwnerID = OwnerID
                 };
                 unitOfWork.Commit();
                 return PartialView("TransactionCategoryPartialView", model);
@@ -80,23 +80,23 @@ namespace HomeBudgetApp.WebApp.Controllers
         }
 
         [HttpPost]
-        public ActionResult AddCategoryEdit(TransactionCategoryEditModel request)
+        public ActionResult AddCategoryEdit(int CategoryID, int Num, int OwnerID, int TransactionID)
         {
             try
             {
-                Category category = unitOfWork.Category.FindByID(request.CategoryID);
+                Category category = unitOfWork.Category.FindByID(CategoryID);
                 TransactionCategoryModel model = new TransactionCategoryModel
                 {
-                    Num = request.Num,
-                    CategoryID = request.CategoryID,
+                    Num = Num,
+                    CategoryID = CategoryID,
                     Name = category.Name,
-                    OwnerID = request.OwnerID
+                    OwnerID = OwnerID
                 };
                 TransactionCategory b = new TransactionCategory
                 {
                     CategoryID = category.CategoryID,
-                    TransactionID = request.TransactionID,
-                    OwnerID = request.OwnerID
+                    TransactionID = TransactionID,
+                    OwnerID = OwnerID
                 };
                 unitOfWork.TransactionCategory.Add(b);
                 unitOfWork.Commit();
@@ -110,12 +110,12 @@ namespace HomeBudgetApp.WebApp.Controllers
         }
 
         [HttpDelete]
-        public ActionResult DeleteCategory(int id, int accountID, int recipientID, int categoryID, int ownerID)
+        public ActionResult DeleteCategory(int id, int categoryID, int ownerID)
         {
             try
             {
                 Transaction transaction = unitOfWork.Transaction.FindByID(id);
-                TransactionCategory tc = unitOfWork.TransactionCategory.FindByID(categoryID, id, accountID, recipientID, ownerID);
+                TransactionCategory tc = unitOfWork.TransactionCategory.FindByID(categoryID, id, ownerID);
                 transaction.Categories.Remove(tc);
                 unitOfWork.Commit();
                 return RedirectToAction("Details", "Account");
@@ -135,7 +135,11 @@ namespace HomeBudgetApp.WebApp.Controllers
             if (id != null)
             {
                 string accountNumber = unitOfWork.Account.Search(a => a.AccountID == (int)id)[0].Number;
-                TransactionCreateModel model = new TransactionCreateModel { Categories = categories, AccountNumber = accountNumber, AccountID = (int)id };
+                TransactionCreateModel model = new TransactionCreateModel { 
+                    Categories = categories, 
+                    AccountNumber = accountNumber, 
+                    AccountID = (int)id
+                };
                 return View("Create", model);
             }
             return RedirectToAction("ShowDetails", "Account", new { id });
@@ -147,11 +151,16 @@ namespace HomeBudgetApp.WebApp.Controllers
             List<Category> list = unitOfWork.Category.GetAll();
             List<SelectListItem> categories = list.Select(c => new SelectListItem { Text = c.Name, Value = c.CategoryID.ToString() }).ToList();
 
-            Account account = unitOfWork.Account.Search(a => a.Number.Equals(m.AccountNumber))[0];
+            Account account = unitOfWork.Account.FindByNumber(m.AccountNumber);
+            int accountID = (account == null) ? 0 : account.AccountID;
 
+            Account recipient = unitOfWork.Account.FindByNumber(m.RecipientAccountNumber);
+            int recipientID = (recipient == null) ? 0 : recipient.AccountID;
+
+            int id = m.Type == "expense" ? accountID : recipientID;
             TransactionCreateModel createModel = new TransactionCreateModel
             {
-                AccountID = account.AccountID,
+                AccountID = id,
                 Categories = categories,
                 AccountNumber = m.AccountNumber,
                 RecipientAccountNumber = m.AccountNumber,
@@ -165,6 +174,10 @@ namespace HomeBudgetApp.WebApp.Controllers
                     Amount = m.Amount
                 }
             };
+
+
+            HttpContext.Session.SetInt32("accountid", id);
+            createModel.Type = m.Type;
             return View("Create", createModel);
         }
 
@@ -247,6 +260,7 @@ namespace HomeBudgetApp.WebApp.Controllers
                         RecipientName = model.Transaction.RecipientName,
                         RecipientAddress = model.Transaction.RecipientAddress,
                         AccountNumber = model.Transaction.AccountNumber,
+                        AccountID = model.Transaction.AccountID,
                         RecipientAccountNumber = model.Transaction.RecipientAccountNumber
                     };
                     HttpContext.Session.Set("transaction", System.Text.Json.JsonSerializer.SerializeToUtf8Bytes(t));
@@ -274,22 +288,18 @@ namespace HomeBudgetApp.WebApp.Controllers
             }
         }
 
-        public ActionResult ShowEdit(int id, int accountID, int recipientID, int ownerAccountID)
+        public ActionResult ShowEdit(int id, int ownerAccountID)
         {
             HttpContext.Session.SetInt32("paymentid", id);
-            HttpContext.Session.SetInt32("recipientid", recipientID);
-            HttpContext.Session.SetInt32("paymentaccountid", accountID);
             HttpContext.Session.SetInt32("owneraccountid", ownerAccountID);
             return RedirectToAction("Edit");
         }
         public ActionResult Edit()
         {
             int? id = HttpContext.Session.GetInt32("paymentid");
-            int? recipientID = HttpContext.Session.GetInt32("recipientid");
-            int? accountID = HttpContext.Session.GetInt32("paymentaccountid");
             int? ownerAccountID = HttpContext.Session.GetInt32("owneraccountid");
 
-            if (id != null && recipientID != null && accountID != null && ownerAccountID != null)
+            if (id != null  && ownerAccountID != null)
             {
                 Transaction transaction = unitOfWork.Transaction.FindByID((int)id);
                 transaction.Categories = unitOfWork.TransactionCategory.Search(b => b.TransactionID == (int)id && b.OwnerID == (int)ownerAccountID);
@@ -298,14 +308,14 @@ namespace HomeBudgetApp.WebApp.Controllers
 
                 TransactionCreateModel model = new TransactionCreateModel
                 {
-                    AccountID = (int)ownerAccountID,
+                    OwnerID = (int)ownerAccountID,
                     Transaction = transaction,
                     Categories = list,
                     CategoryList = categories
                 };
-                return View(model);
+                return View("Edit",model);
             }
-            return RedirectToAction("ShowDetails", "Account", new { id = accountID });
+            return RedirectToAction("ShowDetails", "Account", new { id = ownerAccountID });
         }
 
         [HttpPost]
@@ -392,12 +402,12 @@ namespace HomeBudgetApp.WebApp.Controllers
                 unitOfWork.Transaction.Edit(transaction);
                 unitOfWork.Commit();
                 int id = model.AccountID;
-                return RedirectToAction("ShowDetails", "Account", new { id });
+                return RedirectToAction("Details", "Account");
             }
             catch(Exception)
             {
                 ModelState.AddModelError(string.Empty, "Error editing categories!");
-                return RedirectToAction("Edit");
+                return View("Edit", model);
             }
         }
 

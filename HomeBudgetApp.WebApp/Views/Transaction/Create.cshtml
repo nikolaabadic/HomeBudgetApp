@@ -13,8 +13,17 @@
         <div>
             <input hidden asp-for="AccountID" class="form-control" value="@Model.AccountID" />
             <select asp-for="Transaction.Type" id="transaction-type">
-                <option value="expense" selected>Expense</option>
-                <option value="income">Income</option>
+                @if (Model.Type == "income")
+                {
+                    <option value="expense">Expense</option>
+                    <option value="income" selected>Income</option>
+                }
+                else
+                {
+                    <option value="expense" selected>Expense</option>
+                    <option value="income">Income</option>
+                }
+
             </select>
             <div class="form-group">
                 <label asp-for="Transaction.DateTime" class="control-label">Date</label>
@@ -23,12 +32,27 @@
             </div>
             <div class="form-group">
                 <label asp-for="AccountNumber" class="control-label">From account</label>
-                <input required asp-for="AccountNumber" class="form-control" value="@Model.AccountNumber" id="account-number" readonly/>
+                @if (Model.Type == "income")
+                 {
+                    <input required asp-for="AccountNumber" class="form-control" value="@Model.AccountNumber" id="account-number" />
+                 }
+                 else
+                 {
+                    <input asp-for="AccountNumber" class="form-control" value="@Model.AccountNumber" id="account-number" readonly />
+                 }
                 <span asp-validation-for="AccountNumber" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <label asp-for="RecipientAccountNumber" class="control-label">Recipient Account number</label>
-                <input required asp-for="RecipientAccountNumber" class="form-control" id="recipient-number" />
+                @if (Model.Type == "income")
+                 {
+                    <input asp-for="RecipientAccountNumber" class="form-control" id="recipient-number" readonly />
+                 }
+                 else
+                 {
+                    <input required asp-for="RecipientAccountNumber" class="form-control" id="recipient-number" />
+                 }
+
                 <span asp-validation-for="RecipientAccountNumber" class="text-danger"></span>
             </div>
             <div class="form-group">

@@ -21,6 +21,7 @@ namespace HomeBudgetApp.WebApp.Controllers
         }
 
         // GET: AdminController
+        [ReturnToHome]
         public ActionResult Index()
         {
             return View();
@@ -34,9 +35,9 @@ namespace HomeBudgetApp.WebApp.Controllers
             {
                 Admin admin = unitOfWork.Admin.GetByUsernameAndPinCode(new Admin { Username = model.Username, Password = model.Password });
                 HttpContext.Session.SetInt32("adminid", admin.AdminID);
-                return View("Options");
+                return RedirectToAction("Options");
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 ModelState.AddModelError(string.Empty, "Wrong credentials!");
                 return View("Index");

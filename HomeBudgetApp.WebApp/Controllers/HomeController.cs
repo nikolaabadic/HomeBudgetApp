@@ -7,6 +7,7 @@ using HomeBudgetApp.Data.UnitOfWork;
 using HomeBudgetApp.WebApp.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using HomeBudgetApp.WebApp.Filters;
 
 namespace HomeBudgetApp.WebApp.Controllers
 {
@@ -17,6 +18,7 @@ namespace HomeBudgetApp.WebApp.Controllers
         {
             this.unitOfWork = unitOfWork;
         }
+        [ReturnToHome]
         public ActionResult Index()
         {
             return View();
@@ -36,7 +38,7 @@ namespace HomeBudgetApp.WebApp.Controllers
                 HttpContext.Session.SetInt32("userid", user.UserID);
                 return RedirectToAction("Details", "User");
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 ModelState.AddModelError(string.Empty, "Wrong credentials!");
                 return View("Index");

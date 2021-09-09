@@ -61,7 +61,7 @@ namespace HomeBudgetApp.WebApp.Controllers
                 ModelState.AddModelError(string.Empty, "Username is already taken!");
                 return View();
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 unitOfWork.User.Add(user);
                 unitOfWork.Commit();

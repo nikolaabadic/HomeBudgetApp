@@ -15,12 +15,26 @@
             <input hidden asp-for="UserID" class="form-control" value="@Model.UserID" />
             <div class="form-group">
                 <label asp-for="Template.AccountNumber" class="control-label">From account</label>
-                <input required asp-for="Template.AccountNumber" class="form-control" value="@Model.Template.AccountNumber" />
+                 @if (Model.Template.Type == "expense")
+                  {
+                    <input readonly asp-for="Template.AccountNumber" class="form-control" value="@Model.Template.AccountNumber" />
+                  }
+                  else
+                  {
+                    <input required asp-for="Template.AccountNumber" class="form-control" value="@Model.Template.AccountNumber" />
+                  }
                 <span asp-validation-for="Template.AccountNumber" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <label asp-for="Template.RecipientAccountNumber" class="control-label">Recipient Account number</label>
-                <input required asp-for="Template.RecipientAccountNumber" class="form-control" value="@Model.Template.RecipientAccountNumber" />
+                @if (Model.Template.Type == "expense")
+                 {
+                    <input required asp-for="Template.RecipientAccountNumber" class="form-control" value="@Model.Template.RecipientAccountNumber" />
+                 }
+                 else
+                 {
+                    <input readonly asp-for="Template.RecipientAccountNumber" class="form-control" value="@Model.Template.RecipientAccountNumber" />
+                 }
                 <span asp-validation-for="Template.RecipientAccountNumber" class="text-danger"></span>
             </div>
             <div class="form-group">

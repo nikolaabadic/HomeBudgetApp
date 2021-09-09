@@ -28,14 +28,17 @@ namespace HomeBudgetApp.WebApp.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Create(Category category)
         {
-            try
+
+            Category existingCategories = unitOfWork.Category.FindByName(category.Name);
+            if(existingCategories == null)
             {
                 unitOfWork.Category.Add(category);
                 unitOfWork.Commit();
                 return RedirectToAction("Index");
             }
-            catch
+            else
             {
+                ModelState.AddModelError(string.Empty, "Please enter a unique category name");
                 return View("Create", category);
             }
         }

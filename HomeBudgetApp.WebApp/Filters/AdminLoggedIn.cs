@@ -19,15 +19,10 @@ namespace HomeBudgetApp.WebApp.Filters
 
             if (context.HttpContext.Session.GetInt32("adminid") == null)
             {
-                if (context.HttpContext.Session.GetInt32("userid") != null)
-                {
-                    context.HttpContext.Response.Redirect("/User/Details");
-                    return;
-                }
-                context.HttpContext.Response.Redirect("/Admin/Options");
-                return;
-            }
-            else
+                
+               context.HttpContext.Response.Redirect("/Admin/Index");
+               return;
+            } else
             {
                 Controller controller = (Controller)context.Controller;
                 controller.ViewBag.AdminIsLoggedIn = true;

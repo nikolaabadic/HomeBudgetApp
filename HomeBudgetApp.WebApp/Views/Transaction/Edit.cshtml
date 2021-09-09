@@ -13,7 +13,7 @@
         <div>
             <div class="form-group">
                 <label asp-for="Transaction.AccountNumber" class="control-label"> Account number</label>
-                @if (Model.Transaction.AccountID == Model.AccountID)
+                @if (Model.Transaction.AccountID == Model.OwnerID)
                 {
                     <input readonly asp-for="Transaction.AccountNumber" class="form-control" value="@Model.Transaction.AccountNumber" />
                 }
@@ -25,7 +25,7 @@
             </div>
             <div class="form-group">
                 <label asp-for="Transaction.RecipientAccountNumber" class="control-label">Recipient Account Number</label>
-                @if (Model.Transaction.RecipientID == Model.AccountID)
+                @if (Model.Transaction.RecipientID == Model.OwnerID)
                 {
                     <input readonly asp-for="Transaction.RecipientAccountNumber" class="form-control" value="@Model.Transaction.RecipientAccountNumber" />
                 }
@@ -84,13 +84,13 @@
                 <label class="control-label">Categories:</label>
                 @Html.DropDownList("Category", Model.Categories, new { @class = "form-control", @id = "category-select" })
             </div>
-            @if (Model.Transaction.Categories == null || Model.Transaction.Categories.Count == 0)
+           @if (Model.Transaction.Categories == null || (Model.Transaction.Categories != null && Model.Transaction.Categories.Count == 0))
             {
-                <button class="btn-dark" id="add-category">Add category</button>
+                <button class="btn btn-dark" id="add-category">Add category</button>
             }
             else
             {
-                <button class="btn-dark" id="add-category-edit">Add category</button>
+                <button class="btn btn-primary" id="add-category-edit">Add category</button>
             }
             <table class="table" id="categories">
                 <thead>
@@ -114,7 +114,7 @@
                                     <td>@category.Name</td>
                                 }
                             }
-                            <td><a href="javascript:DeleteCategory(@Model.Transaction.TransactionID,@Model.Transaction.AccountID, @Model.Transaction.RecipientID,@item.CategoryID,@item.OwnerID)">Delete</a></td>
+                            <td><a href="javascript:DeleteCategory(@Model.Transaction.TransactionID,@item.CategoryID,@item.OwnerID)">Delete</a></td>
                         </tr>
                     }
                 </tbody>
@@ -135,9 +135,9 @@
                 url: '@Url.ActionLink("AddCategory", "Transaction")',
                 method: 'post',
                 data: {
-                    CategoryID: $('#category-select').val(),
-                    Num: $('#categories tbody tr').length,
-                    OwnerID: @Model.AccountID,
+                    CategoryID: parseInt($('#category-select').val()),
+                    Num: parseInt($('#categories tbody tr').length),
+                    OwnerID: @Model.OwnerID,
                     },
                 success: function (data) {
                     $('#categories tbody').append(data);
@@ -154,12 +154,10 @@
                 url: '@Url.ActionLink("AddCategoryEdit", "Transaction")',
                 method: 'post',
                 data: {
-                    CategoryID: $('#category-select').val(),
-                    Num: $('#categories tbody tr').length,
-                    OwnerID: @Model.AccountID,
+                    CategoryID: parseInt($('#category-select').val()),
+                    Num: parseInt($('#categories tbody tr').length),
+                    OwnerID: @Model.OwnerID,
                     TransactionID: @Model.Transaction.TransactionID,
-                    AccountID: @Model.Transaction.AccountID,
-                    RecipientID: @Model.Transaction.RecipientID,
                     },
                 success: function (data) {
                     $('#categories tbody').append(data);
@@ -169,14 +167,12 @@
                 }
             });
         });
-        function DeleteCategory(PaymentID, AccountID, RecipientID, CategoryID, OwnerID) {
+        function DeleteCategory(PaymentID, CategoryID, OwnerID) {
                 $.ajax({
                     url: "@Url.Action("DeleteCategory","Transaction")" ,
                     type: 'Delete',
                     data: {
                         id: PaymentID,
-                        accountID: AccountID,
-                        recipientID: RecipientID,
                         categoryID: CategoryID,
                         ownerID: OwnerID
                     },

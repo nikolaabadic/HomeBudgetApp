@@ -32,5 +32,17 @@ namespace HomeBudgetApp.Data.Implementation
         {
             return context.Categories.ToList();
         }
+
+        public Category FindByName(string name)
+        {
+            try
+            {
+                Category category = context.Categories.Single(c => c.Name == name);
+                return category;
+            } catch (Exception)
+            {
+                return null;
+            }
+        }
     }
 }

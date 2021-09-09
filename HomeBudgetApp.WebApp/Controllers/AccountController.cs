@@ -121,9 +121,12 @@ namespace HomeBudgetApp.WebApp.Controllers
                     List<ChartCategory> incomeFinal = new List<ChartCategory>();
                     foreach (var c in categoryNamesIncome)
                     {
-                        ChartCategory cc = new ChartCategory();
-                        cc.Name = c;
-                        cc.Amount = 0;
+                        ChartCategory cc = new ChartCategory
+                        {
+                           Name = c,
+                           Amount = 0
+                        };
+
                         foreach (var p in chartCategoriesIncome)
                         {
                             if (p.Name == c)
@@ -139,9 +142,12 @@ namespace HomeBudgetApp.WebApp.Controllers
                     List<ChartCategory> expenseFinal = new List<ChartCategory>();
                     foreach (var c in categoryNamesExpense)
                     {
-                        ChartCategory cc = new ChartCategory();
-                        cc.Name = c;
-                        cc.Amount = 0;
+                        ChartCategory cc = new ChartCategory
+                        {
+                           Name = c,
+                           Amount = 0
+                        };
+
                         foreach (var p in chartCategoriesExpense)
                         {
                             if (p.Name == c)
@@ -174,7 +180,7 @@ namespace HomeBudgetApp.WebApp.Controllers
                 }
                 return RedirectToAction("Details", "User");
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 return RedirectToAction("Details", "User");
             }
@@ -266,7 +272,7 @@ namespace HomeBudgetApp.WebApp.Controllers
                 account.AccountType = model.AccountType;
 
                 Account accountDB = unitOfWork.Account.FindByNumber(model.Number);
-                if (accountDB != null)
+                if (accountDB != null && accountDB.AccountID != model.OwnerAccountID)
                 {
                     ModelState.AddModelError(string.Empty, "Account number must be unique!");
                     return View(model);
@@ -280,9 +286,8 @@ namespace HomeBudgetApp.WebApp.Controllers
                 unitOfWork.Commit();
                 return RedirectToAction("ShowDetails", "User", new { id = model.UserID });
 
-            } catch(Exception e)
+            } catch(Exception)
             {
-                Console.WriteLine(e.StackTrace);
                 return View("Edit", model);
             }            
         }

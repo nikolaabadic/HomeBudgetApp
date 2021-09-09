@@ -35,6 +35,7 @@ namespace HomeBudgetApp.WebApp.Controllers
         public ActionResult Create(TemplateCreateModel m)
         {
             int id = (int)HttpContext.Session.GetInt32("userid");
+            int accountID = (int)HttpContext.Session.GetInt32("accountid");
             m.UserID = id;
             m.Categories = unitOfWork.Category.GetAll()
                 .Select(c => new SelectListItem { Text = c.Name, Value = c.CategoryID.ToString() }).ToList();
@@ -47,6 +48,8 @@ namespace HomeBudgetApp.WebApp.Controllers
                 byte[] transactionByte = HttpContext.Session.Get("transaction");
                 m.Transaction = JsonSerializer.Deserialize<Transaction>(transactionByte);
             }
+
+            m.Type = m.Transaction.AccountID == accountID ? "expense" : "income";
             
             return View(m);
         }
@@ -55,12 +58,14 @@ namespace HomeBudgetApp.WebApp.Controllers
         public ActionResult CreateTemplate(TemplateCreateModel m)
         {
             User user = unitOfWork.User.FindByID(m.UserID);
+            int accountID = (int)HttpContext.Session.GetInt32("accountid");
             Category category = unitOfWork.Category.FindByID(m.CategoryID);
 
             List<Template> templates = unitOfWork.Template.Search(t =>
                 t.UserID == m.UserID && t.Name == m.Name);
             if(templates == null || templates.Count == 0)
             {
+                string type = m.Transaction.AccountID != null && m.Transaction.AccountID== accountID ? "expense" : "income";
                 unitOfWork.Template.Add(new Template
                 {
                     User = user,
@@ -73,7 +78,8 @@ namespace HomeBudgetApp.WebApp.Controllers
                     Category = category,
                     Amount = m.Transaction.Amount,
                     Name = m.Name,
-                    AccountNumber = m.Transaction.AccountNumber
+                    AccountNumber = m.Transaction.AccountNumber,
+                    Type = type
                 });
                 unitOfWork.Commit();
                 return RedirectToAction("Details", "Account");
@@ -82,6 +88,7 @@ namespace HomeBudgetApp.WebApp.Controllers
                 ModelState.AddModelError(string.Empty,"Please enter a unique template name.");
                 m.Categories = unitOfWork.Category.GetAll()
                 .Select(c => new SelectListItem { Text = c.Name, Value = c.CategoryID.ToString() }).ToList();
+                m.Type = m.Transaction.AccountID != null && m.Transaction.AccountID == accountID ? "expense" : "income";
                 return View("Create", m);
             }            
         }
@@ -101,6 +108,9 @@ namespace HomeBudgetApp.WebApp.Controllers
             Template template = unitOfWork.Template.FindByID(id);
             List<SelectListItem> categories = unitOfWork.Category.GetAll()
                 .Select(c => new SelectListItem { Text = c.Name, Value = c.CategoryID.ToString() }).ToList();
+            
+
+            
             return View(new TemplateCreateModel
             {
                 UserID = userID,

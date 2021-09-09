@@ -7,5 +7,6 @@ namespace HomeBudgetApp.Data
 {
     public interface IRepositoryCategory : IRepository<Category>
     {
+        public Category FindByName(string name);
     }
 }

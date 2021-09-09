@@ -49,13 +49,13 @@
                                 <a class="nav-link" asp-area="" asp-controller="User" asp-action="Logout">Log out</a>
                             </li>
                         }
-                        @if (ViewBag.IsLoggedIn == null || !ViewBag.IsLoggedIn)
+                        @if ((ViewBag.IsLoggedIn == null || !ViewBag.IsLoggedIn) && (ViewBag.AdminIsLoggedIn == null || !ViewBag.AdminIsLoggedIn))
                         {
                             <li class="nav-item">
                                 <a class="nav-link" asp-area="" asp-controller="User" asp-action="Create">Register</a>
                             </li>
                         }
-                        @if (ViewBag.AdminIsLoggedIn != null && ViewBag.AdminIsLoggedIn && ViewBag.IsLoggedIn == null)
+                        @if (ViewBag.AdminIsLoggedIn != null && ViewBag.AdminIsLoggedIn)
                         {
                             <li class="nav-item">
                                 <a class="nav-link text-dark" asp-area="" asp-controller="Admin" asp-action="Options">Home</a>

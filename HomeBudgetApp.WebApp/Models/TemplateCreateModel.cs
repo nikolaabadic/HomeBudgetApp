@@ -18,6 +18,7 @@ namespace HomeBudgetApp.WebApp.Models
         public int UserID { get; set; }
         public DateTime Now = DateTime.UtcNow;
         public Template Template { get; set; }
+        public string Type { get; set; }
 
     }
 }

@@ -17,6 +17,7 @@ namespace HomeBudgetApp.WebApp.Models
         public int Model { get; set; }
         public string ReferenceNumber { get; set; }
         public double Amount { get; set; }
+        public string Type { get; set; }
         public List<SelectListItem> Categories { get; set; }
 
         public DateTime Now = DateTime.UtcNow;
