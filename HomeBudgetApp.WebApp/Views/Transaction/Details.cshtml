@@ -93,6 +93,24 @@ new HomeBudgetApp.WebApp.Models.TemplateCreateModel
 {
     TransactionID = Model.Transaction.TransactionID
 })
-
+@Html.ActionLink("Edit", "ShowEdit", "Transaction", new { id = Model.Transaction.TransactionID, Model.OwnerAccountID })
+<button class="btn btn-light" onclick="deleteTransaction(@Model.Transaction.TransactionID)">Delete</button>
+<script>
+    const deleteTransaction = (id) => {
+    if (confirm('Are you sure you want to delete this transaction?')){
+        $.ajax({
+            url: '@Url.ActionLink("Delete", "Transaction")',
+            method: 'post',
+            data: { TransactionID: parseInt(id), AccountID: @Model.OwnerAccountID },
+            success: function (response) {
+                window.location.href = response.redirectToUrl;
+            },
+            error: function () {
+                alert("Error");
+            }
+        });
+    }
+}
+</script>
 
 

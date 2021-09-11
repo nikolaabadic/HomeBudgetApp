@@ -1,4 +1,5 @@
 ﻿using HomeBudgetApp.Domain;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -22,5 +23,6 @@ namespace HomeBudgetApp.WebApp.Models
         public List<double> ExpenseCategory { get; set; }
         public List<string> IncomeLabels { get; set; }
         public List<string> ExpenseLabels { get; set; }
+        public List<SelectListItem> Categories { get; set; }
     }
 }

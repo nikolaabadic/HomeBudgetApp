@@ -27,7 +27,12 @@
 </div>
 <div class="accounts">
     <h1>My Accounts</h1>
-    @Html.ActionLink("Create account", "Create", "Account", new { userID = Model.UserID })
+
+    <input type="text" class="input" id="search-value" />
+    <button class="btn btn-light" id="search">Search</button>
+    <a href="@Url.Action("Create", "Account", new { userID = Model.UserID })">
+        <i class="bi bi-journal-plus"> Create account</i>
+    </a>
     <table class="table">
         <thead>
             <tr>
@@ -40,40 +45,40 @@
         <tbody>
             @foreach (var a in Model.Accounts)
             {
-            <tr>
-                <td>@a.Number</td>
-                <td>@a.AccountType</td>
-                <td>@a.Currency</td>
-                <td>
-                    <div class="action-link">
-                        @Html.ActionLink("Details", "ShowDetails", "Account", new { id = a.AccountID })
-                    </div>
-                </td>
-                <td>@Html.ActionLink("Edit", "Edit", "Account", new { id = a.AccountID, a.UserID })</td>
-                <td><button class="btn btn-light" onclick="deleteAccount(@a.AccountID)">Delete</button></td>
-            </tr>
+                <tr>
+                    <td>@a.Number</td>
+                    <td>@a.AccountType</td>
+                    <td>@a.Currency</td>
+                    <td>
+                        <div class="action-link">
+                            @Html.ActionLink("Details", "ShowDetails", "Account", new { id = a.AccountID })
+                        </div>
+                    </td>
+                </tr>
             }
         </tbody>
     </table>
 
 </div>
-@section Scripts{ 
+@section Scripts{
     <script>
-        const deleteAccount = (id) => {
-        if (confirm('Are you sure you want to delete this account?')){
-            $.ajax({
-                url: '@Url.ActionLink("Delete", "Account")',
-                method: 'post',
-                data: { AccountID: parseInt(id), UserID: @Model.UserID},
-                success: function (response) {
-                    window.location.href = response.redirectToUrl;
-                },
-                error: function () {
-                    alert("Error");
-                }
-            });
-        }
-    }
+    $('#search').click(function (e) {
+        e.preventDefault();
+
+        $.ajax({
+            url: '@Url.ActionLink("Search", "Account")',
+            method: 'post',
+            data: {
+                Param: $('#search-value').val()
+            },
+            success: function (data) {
+                window.location.href = data.redirectToUrl;
+            },
+            error: function () {
+                alert("Error");
+            }
+        });
+    });
     </script>
 }
 

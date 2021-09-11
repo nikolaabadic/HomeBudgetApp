@@ -21,6 +21,7 @@
         <option value="1">Most recent</option>
         <option value="2">From begining</option>
     </select>
+    @Html.DropDownList("CategoryID", Model.Categories)
     <button class="btn btn-primary" id="btn-search">Search</button>
 </div>
 
@@ -70,7 +71,12 @@
                 $.ajax({
                     url: '@Url.ActionLink("GetResults", "Transaction")',
                     method: 'get',
-                    data: { Param: $('#param').val(), Type: $('#type').val(), DateOrder: $('#dateOrder').val() },
+                    data: {
+                        Param: $('#param').val(),
+                        Type: parseInt($('#type').val()),
+                        DateOrder: parseInt($('#dateOrder').val()),
+                        CategoryID: parseInt($('#CategoryID').val())
+                    },
                     success: function (response) {
                         window.location.href = "Search";
                     },

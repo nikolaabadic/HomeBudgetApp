@@ -24,12 +24,22 @@ namespace HomeBudgetApp.WebApp.Controllers
         public ActionResult Index()
         {
             int id = (int)HttpContext.Session.GetInt32("userid");
-            List<Template> templates = unitOfWork.Template.Search(t => t.UserID == id).OrderBy(t => t.Name).ToList();
             List<Category> categories = unitOfWork.Category.GetAll();
-            return View(new TemplatesModel{
-                Templates = templates,
+            TemplatesModel model = new TemplatesModel
+            {
                 Categories = categories
-            });
+            };
+
+            byte[] templatesByte = HttpContext.Session.Get("templates");
+            if (templatesByte == null)
+            {
+                model.Templates = unitOfWork.Template.Search(t => t.UserID == id).OrderBy(t => t.Name).ToList();
+            } else
+            {
+                model.Templates = System.Text.Json.JsonSerializer.Deserialize<List<Template>>(templatesByte);
+            }            
+
+            return View("Index",model);
         }
 
         public ActionResult Create(TemplateCreateModel m)
@@ -140,7 +150,29 @@ namespace HomeBudgetApp.WebApp.Controllers
             m.Template.UserID = m.UserID;
             unitOfWork.Template.Edit(m.Template);
             unitOfWork.Commit();
-            return RedirectToAction("Index");
+            return RedirectToAction("Details", new { templateID = m.Template.TemplateID });
+        }
+
+       [HttpGet]
+       public ActionResult Details(int templateID)
+       {
+            Template template = unitOfWork.Template.FindByID(templateID);
+            template.Category = unitOfWork.Category.FindByID(template.CategoryID);
+            TemplateCreateModel model = new TemplateCreateModel { 
+                Template = template
+            };
+            return View(model);
+       }
+
+        [HttpPost]
+        public ActionResult Search(string Param)
+        {
+            int id = (int)HttpContext.Session.GetInt32("userid");
+            List<Template> templates = unitOfWork.Template.Search(t => t.UserID == id && t.Name.ToLower().Contains(Param)).OrderBy(t => t.Name).ToList();
+            
+            HttpContext.Session.Set("templates", System.Text.Json.JsonSerializer.SerializeToUtf8Bytes(templates));
+
+            return Json(new { redirectToUrl = Url.Action("Index") });
         }
     }
 }

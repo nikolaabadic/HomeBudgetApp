@@ -8,7 +8,8 @@
 }
 
 <h1>Your templates</h1>
-
+<input type="text" class="input" id="search-value" />
+<button class="btn btn-light" id="search">Search</button>
 <table class="table">
     <thead>
         <tr>
@@ -24,36 +25,54 @@
     <tbody>
         @foreach (var item in Model.Templates)
         {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.Name)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => Model.Categories.Single(c => c.CategoryID == item.CategoryID).Name)
-            </td>
-            <td>
-                @Html.ActionLink("Create a Transaction", "CreateFromTemplate", "Transaction",
-                    new HomeBudgetApp.WebApp.Models.TransactionFromTemplateModel
-                    {
-                        RecipientName = item.RecipientName,
-                        RecipientAddress = item.RecipientAddress,
-                        Model = item.Model,
-                        Purpose = item.Purpose,
-                        ReferenceNumber = item.ReferenceNumber,
-                        Amount = item.Amount,
-                        RecipientAccountNumber = item.RecipientAccountNumber,
-                        AccountNumber = item.AccountNumber,
-                        Type = item.Type
-                    })
-            </td>
-            <td>
-                @Html.ActionLink("Delete Template", "Delete", "Template", new { id = item.TemplateID })
-            </td>
-            <td>
-                @Html.ActionLink("Edit", "Edit", "Template", new { id = item.TemplateID })
-            </td>
-        </tr>
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Name)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => Model.Categories.Single(c => c.CategoryID == item.CategoryID).Name)
+                </td>
+                <td>
+                    @Html.ActionLink("Create a Transaction", "CreateFromTemplate", "Transaction",
+                        new HomeBudgetApp.WebApp.Models.TransactionFromTemplateModel
+                        {
+                            RecipientName = item.RecipientName,
+                            RecipientAddress = item.RecipientAddress,
+                            Model = item.Model,
+                            Purpose = item.Purpose,
+                            ReferenceNumber = item.ReferenceNumber,
+                            Amount = item.Amount,
+                            RecipientAccountNumber = item.RecipientAccountNumber,
+                            AccountNumber = item.AccountNumber,
+                            Type = item.Type
+                        })
+                </td>
+                <td>
+                    @Html.ActionLink("Details", "Details", "Template", new { templateID = item.TemplateID })
+                </td>
+            </tr>
         }
     </tbody>
 </table>
+@section Scripts{
+    <script>
+    $('#search').click(function (e) {
+        e.preventDefault();
+
+        $.ajax({
+            url: '@Url.ActionLink("Search", "Template")',
+            method: 'post',
+            data: {
+                Param: $('#search-value').val()
+            },
+            success: function (data) {
+                window.location.href = data.redirectToUrl;
+            },
+            error: function () {
+                alert("Error");
+            }
+        });
+    });
+    </script>
+}
 

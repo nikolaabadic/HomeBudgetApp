@@ -43,6 +43,7 @@ namespace HomeBudgetApp.WebApp.Controllers
             try
             {
                 int? id = HttpContext.Session.GetInt32("accountid");
+                int? userID = HttpContext.Session.GetInt32("userid");
                 if (id != null)
                 {
                     Account account = unitOfWork.Account.FindByID((int)id);
@@ -52,6 +53,7 @@ namespace HomeBudgetApp.WebApp.Controllers
                     model.AccountType = account.AccountType;
                     model.Currency = account.Currency;
                     model.Number = account.Number;
+                    model.UserID = (int)userID;
 
                     double amount = 0;
 
@@ -272,24 +274,35 @@ namespace HomeBudgetApp.WebApp.Controllers
                 account.AccountType = model.AccountType;
 
                 Account accountDB = unitOfWork.Account.FindByNumber(model.Number);
-                if (accountDB != null && accountDB.AccountID != model.OwnerAccountID)
+                if (accountDB == null || (accountDB != null && accountDB.AccountID == model.OwnerAccountID))
+                {
+                    account.Number = model.Number;
+                }
+                else
                 {
                     ModelState.AddModelError(string.Empty, "Account number must be unique!");
                     return View(model);
                 }
-                else
-                {
-                    account.Number = model.Number;
-                }
 
                 unitOfWork.Account.Edit(account);
                 unitOfWork.Commit();
-                return RedirectToAction("ShowDetails", "User", new { id = model.UserID });
+                return RedirectToAction("Details", "Account");
 
             } catch(Exception)
             {
                 return View("Edit", model);
             }            
+        }
+
+        [HttpPost]
+        public ActionResult Search(string Param)
+        {
+            int id = (int)HttpContext.Session.GetInt32("userid");
+            List<Account> accounts = unitOfWork.Account.Search(a => a.UserID == id && !a.Hidden && a.Number.ToLower().Contains(Param)).ToList();
+
+            HttpContext.Session.Set("templates", System.Text.Json.JsonSerializer.SerializeToUtf8Bytes(accounts));
+
+            return Json(new { redirectToUrl = Url.Action("Details", "User") });
         }
     }
 }

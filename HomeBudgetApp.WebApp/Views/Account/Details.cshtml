@@ -37,6 +37,10 @@
         <dd class="col-sm-10">
             @Html.DisplayFor(model => model.Amount)
         </dd>
+
+        <dt>@Html.ActionLink("Edit", "Edit", "Account", new { id = Model.OwnerAccountID, Model.UserID })</dt>
+        <dd><button class="btn btn-light" onclick="deleteAccount(@Model.OwnerAccountID)">Delete</button></dd>
+
     </dl>
     <img class="card-img" src="~/img/card.png" />
     <div class="credit-cards">
@@ -61,9 +65,9 @@
 </div>
 <hr />
 @if ((Model.IncomeCategory != null && Model.IncomeLabels != null && Model.IncomeLabels.Count != 0
-         && Model.IncomeCategory.Count != 0) || (Model.ExpenseCategory != null && Model.ExpenseLabels != null
-         && Model.ExpenseLabels.Count != 0 && Model.ExpenseCategory.Count != 0)) 
-{ 
+       && Model.IncomeCategory.Count != 0) || (Model.ExpenseCategory != null && Model.ExpenseLabels != null
+       && Model.ExpenseLabels.Count != 0 && Model.ExpenseCategory.Count != 0))
+{
     <div id="charts">
         @if (Model.IncomeCategory != null && Model.IncomeLabels != null && Model.IncomeLabels.Count != 0 && Model.IncomeCategory.Count != 0)
         {
@@ -121,8 +125,6 @@
                     <td>@p.AccountNumber</td>
                     <td>@p.RecipientAccountNumber</td>
                     <td>@Html.ActionLink("Details", "ShowDetails", "Transaction", new { id = p.TransactionID, p.AccountID, p.RecipientID, Model.OwnerAccountID })</td>
-                    <td>@Html.ActionLink("Edit", "ShowEdit", "Transaction", new { id = p.TransactionID, Model.OwnerAccountID })</td>
-                    <td><button class="btn btn-light" onclick="deleteTransaction(@p.TransactionID)">Delete</button></td>
                 </tr>
             }
         </tbody>
@@ -130,11 +132,12 @@
 </div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.min.js"></script>
 <script type="text/javascript">
-    var incomeLabels = @Html.Raw(JsonConvert.SerializeObject(Model.IncomeLabels));
-    var incomeValues = @Html.Raw(JsonConvert.SerializeObject(Model.IncomeCategory));
-    var expenseLabels = @Html.Raw(JsonConvert.SerializeObject(Model.ExpenseLabels));
-    var expenseValues = @Html.Raw(JsonConvert.SerializeObject(Model.ExpenseCategory));
+var incomeLabels = @Html.Raw(JsonConvert.SerializeObject(Model.IncomeLabels));
+var incomeValues = @Html.Raw(JsonConvert.SerializeObject(Model.IncomeCategory));
+var expenseLabels = @Html.Raw(JsonConvert.SerializeObject(Model.ExpenseLabels));
+var expenseValues = @Html.Raw(JsonConvert.SerializeObject(Model.ExpenseCategory));
 
+    if (incomeLabels != null && incomeValues != null && incomeLabels.length != 0 && incomeValues.length != 0) {
     var ctx = document.getElementById('pie_chart_income').getContext('2d');
     var barChartIncome = new Chart(ctx, {
         type: 'pie',
@@ -156,7 +159,9 @@
             }
         }
     });
-
+    }
+    if (expenseLabels != null && expenseValues != null && expenseLabels.length != 0 && expenseValues.length != 0)
+{
     var ctxEx = document.getElementById('pie_chart_expense').getContext('2d');
     var barChartExpense = new Chart(ctxEx, {
         type: 'pie',
@@ -164,7 +169,7 @@
             labels: expenseLabels,
             datasets: [{
                 data: expenseValues,
-                backgroundColor: ['rgba(27,110,194)', '#33A1C9', '#38B0DE', '#6996AD', '#8DB6CD', '#A4D3EE', '#4A708B', '#4682B4','#0D4F8B']
+                backgroundColor: ['rgba(27,110,194)', '#33A1C9', '#38B0DE', '#6996AD', '#8DB6CD', '#A4D3EE', '#4A708B', '#4682B4', '#0D4F8B']
             }]
         },
         options: {
@@ -178,20 +183,23 @@
             }
         }
     });
+}
 
-    const deleteTransaction = (id) => {
-        if (confirm('Are you sure you want to delete this transaction?')){
-            $.ajax({
-                url: '@Url.ActionLink("Delete", "Transaction")',
-                method: 'post',
-                data: { TransactionID: parseInt(id), AccountID: @Model.OwnerAccountID },
-                success: function (response) {
-                    window.location.href = response.redirectToUrl;
-                },
-                error: function () {
-                    alert("Error");
-                }
-            });
+const deleteAccount = (id) => {
+    if (confirm('Are you sure you want to delete this account?')){
+    $.ajax({
+        url: '@Url.ActionLink("Delete", "Account")',
+        method: 'post',
+        data: { AccountID: parseInt(id), UserID: @Model.UserID},
+        success: function (response) {
+            window.location.href = response.redirectToUrl;
+        },
+        error: function () {
+            alert("Error");
         }
+    });
     }
+}
+
 </script>
+

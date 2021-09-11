@@ -51,6 +51,7 @@ namespace HomeBudgetApp.WebApp.Controllers
                 model.Transaction = unitOfWork.Transaction.FindByID((int)id);
                 model.Transaction.Categories = belongings;
                 model.Categories = unitOfWork.Category.GetAll();
+                model.OwnerAccountID = (int)ownerAccountID;
                 return View(model);
             }
             return RedirectToAction("Details", "Account");
@@ -402,7 +403,7 @@ namespace HomeBudgetApp.WebApp.Controllers
                 unitOfWork.Transaction.Edit(transaction);
                 unitOfWork.Commit();
                 int id = model.AccountID;
-                return RedirectToAction("Details", "Account");
+                return RedirectToAction("Details", "Transaction");
             }
             catch(Exception)
             {
@@ -416,11 +417,15 @@ namespace HomeBudgetApp.WebApp.Controllers
         {
             int id = (int)HttpContext.Session.GetInt32("accountid");
             model.OwnerAccountID = id;
+            List<SelectListItem> list =unitOfWork.Category.GetAll().
+                Select(c => new SelectListItem { Text = c.Name, Value = c.CategoryID.ToString() }).ToList();
+            list.Insert(0, new SelectListItem { Text = "All", Value = "0" });
 
             if (TempData["model"] is string s)
             {
                 var result = Newtonsoft.Json.JsonConvert.DeserializeObject<AccountDetailsModel>(s);   
                 result.OwnerAccountID = id;
+                result.Categories = list;
                 return View("Search", result);
             }
             else 
@@ -433,13 +438,14 @@ namespace HomeBudgetApp.WebApp.Controllers
                 paymentsTo = paymentsTo.Where(t => visibleTransactions.Any(p => p.TransactionID == t.TransactionID)).ToList();
                 List<Transaction> finalList = paymentsFrom.Concat(paymentsTo).ToList().OrderBy(p => p.DateTime).Reverse().ToList();
                 
-                model.Transactions = finalList; 
+                model.Transactions = finalList;
+                model.Categories = list;
                 return View("Search", model);
             } 
         }
 
 
-        public ActionResult GetResults(string Param, string Type, string DateOrder)
+        public ActionResult GetResults(string Param, int Type, int DateOrder, int CategoryID)
         {
             int id = (int)HttpContext.Session.GetInt32("accountid");
             List<Transaction> transactions = unitOfWork.Transaction.Search(t =>
@@ -448,7 +454,6 @@ namespace HomeBudgetApp.WebApp.Controllers
                 t.RecipientName.ToLower().Contains(Param.ToLower()) ||
                 t.RecipientAddress.ToLower().Contains(Param.ToLower())));
 
-            int type = int.Parse(Type);
             if (String.IsNullOrEmpty(Param))
             {
                 transactions = unitOfWork.Transaction.Search(t => t.AccountID == id || t.RecipientID == id).OrderBy(t => t.DateTime).Reverse().ToList();
@@ -457,23 +462,28 @@ namespace HomeBudgetApp.WebApp.Controllers
                 transactions = transactions.OrderBy(t => t.DateTime).Reverse().ToList();
             }
 
-            if (type == 1)
+            if (Type == 1)
             {
                 transactions = transactions.Where(t => t.RecipientID == id).ToList();
             }
-            if(type == 2)
+            if(Type == 2)
             {
                 transactions = transactions.Where(t => t.AccountID == id).ToList();
-            }
-
-            if(int.Parse(DateOrder) == 2)
+            } 
+            if(DateOrder == 2)
             {
                 transactions = transactions.OrderBy(t => t.DateTime).ToList();
             }
 
             List<TransactionAccount> visibleTransactions = unitOfWork.TransactionAccount.Search(t => t.AccountID == id && !t.Hidden);
             transactions = transactions.Where(t => visibleTransactions.Any(p => p.TransactionID == t.TransactionID)).ToList();
-            
+
+            List<TransactionCategory> categories = unitOfWork.TransactionCategory.Search(c => c.OwnerID == id && c.CategoryID == CategoryID);
+            if(CategoryID != 0)
+            {
+                transactions = transactions.Where(t => categories.Any(c => c.TransactionID == t.TransactionID)).ToList();
+            }
+
             AccountDetailsModel model = new AccountDetailsModel
             {
                 OwnerAccountID = id,
