@@ -3,7 +3,7 @@
     height: 90vh;
     background-size: cover;
     background-position: center;
-    font-family: 'Roboto', sans-serif;
+    font-weight: 600;
 }
 .user-info{
     display: flex;
@@ -17,22 +17,16 @@ img{
     padding-left: 20px;
     color: black !important;
 }
-h1 {
+h1,h2 {
     color: black !important;
-    padding-bottom: 30px;
 }
 .accounts{
     margin-top:20px;
 }
-.accounts h1{
-    padding-bottom:30px;
-}
+
 
 .footer .container {
     color: black !important;
-}
-.table{
-    background-color:whitesmoke;
 }
 .account-details{
     display:flex;
@@ -74,7 +68,7 @@ h3,h4,dd,dt{
 }
 .btn-add-container{
     display:flex;
-    flex-direction:row-reverse;
+    justify-content:flex-end;
     margin-bottom:10px;
 }
 .btn-add {
@@ -85,11 +79,8 @@ h3,h4,dd,dt{
     width:auto;
     vertical-align:text-bottom;
 }
-.footer {
-    position: relative;
-}
-.combo-box{
-    width:200px;
+.custom-select{
+    font-weight:600;
 }
 #charts {
     padding-top: 50px;
@@ -108,4 +99,71 @@ canvas{
 }
 .search-container{
     padding-bottom:20px;
+}
+.results {
+    width:60%;
+    border-collapse: separate;
+    border-spacing: 0 1rem;
+    margin-top: -1rem;
+    margin-bottom: -1rem;
+    padding-left:50px;
+}
+.results > tbody > tr > th:first-child {
+    border-left-style: none;
+    border-top-left-radius: 10px;
+    border-bottom-left-radius: 10px;
+}
+
+.results > tbody > tr > td:last-child {
+    border-right-style: none;
+    border-bottom-right-radius: 10px;
+    border-top-right-radius: 10px;
+}
+
+.results > tbody > tr > td, th {
+    background-color: whitesmoke;
+}
+a{
+    text-decoration:none !important;
+    color: black;
+}
+dt{
+    font-weight:500;
+}
+.delete-btn:hover {
+    cursor: pointer;
+    color: #0056b3 !important;
+}
+.transactions {
+    margin: auto;
+    width: 80%;
+    border-collapse: separate;
+    border-spacing: 0 0.4rem;
+    margin-top: -1rem;
+    padding-bottom:50px;
+}
+
+    .transactions > tbody > tr > td:first-child {
+        border-left-style: none;
+        border-top-left-radius: 10px;
+        border-bottom-left-radius: 10px;
+    }
+
+    .transactions > tbody > tr > td:last-child {
+        border-right-style: none;
+        border-bottom-right-radius: 10px;
+        border-top-right-radius: 10px;
+    }
+
+    .transactions > tbody > tr > td, th {
+        background-color: whitesmoke;
+        color:black;
+    }
+    .transactions th {
+        color: black;
+    }
+
+#btn-delete-card:hover{
+    color:red !important;
+    text-decoration:none;
 }

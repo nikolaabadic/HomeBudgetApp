@@ -298,9 +298,17 @@ namespace HomeBudgetApp.WebApp.Controllers
         public ActionResult Search(string Param)
         {
             int id = (int)HttpContext.Session.GetInt32("userid");
-            List<Account> accounts = unitOfWork.Account.Search(a => a.UserID == id && !a.Hidden && a.Number.ToLower().Contains(Param)).ToList();
+            List<Account> accounts = null;
+            if (String.IsNullOrEmpty(Param))
+            {
+                accounts = unitOfWork.Account.Search(a => a.UserID == id && !a.Hidden);
+            } else
+            {
+                accounts = unitOfWork.Account.Search(a => a.UserID == id && !a.Hidden && a.Number.ToLower().Contains(Param)).ToList();
+            }
+            
 
-            HttpContext.Session.Set("templates", System.Text.Json.JsonSerializer.SerializeToUtf8Bytes(accounts));
+            HttpContext.Session.Set("accounts", System.Text.Json.JsonSerializer.SerializeToUtf8Bytes(accounts));
 
             return Json(new { redirectToUrl = Url.Action("Details", "User") });
         }

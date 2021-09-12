@@ -89,7 +89,7 @@ namespace HomeBudgetApp.WebApp.Controllers
                 model.Name = user.Name;
                 model.Surname = user.Surname;
 
-                byte[] accountsByte = HttpContext.Session.Get("templates");
+                byte[] accountsByte = HttpContext.Session.Get("accounts");
                 if (accountsByte == null)
                 {
                     model.Accounts = unitOfWork.Account.Search(a => a.UserID == user.UserID && !a.Hidden);

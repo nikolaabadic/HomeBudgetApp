@@ -6,7 +6,7 @@
 @section Style{
     <link rel="stylesheet" href="~/css/details.css" />
 }
-<h1>Create a new Account</h1>
+<h1 class="mt-2">Create a new Account</h1>
 <hr />
 <div class="row">
     <div class="col-md-4">
@@ -18,14 +18,14 @@
             <div class="form-group">
                 <label asp-for="Currency" class="control-label"></label>
                 <div class="combo-box">
-                    @Html.DropDownListFor(model => model.Currency, Enum.GetNames(typeof(HomeBudgetApp.Domain.Currency)).Select(e => new SelectListItem { Text = e }))
+                    @Html.DropDownListFor(model => model.Currency, Enum.GetNames(typeof(HomeBudgetApp.Domain.Currency)).Select(e => new SelectListItem { Text = e }), new { @class = "custom-select" })
                 </div>
                 <span asp-validation-for="Currency" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="AccountType" class="control-label"></label>
+                <label asp-for="AccountType" class="control-label">Type</label>
                 <div class="combo-box">
-                    @Html.DropDownListFor(model => model.AccountType, Enum.GetNames(typeof(HomeBudgetApp.Domain.AccountType)).Select(e => new SelectListItem { Text = e }))
+                    @Html.DropDownListFor(model => model.AccountType, Enum.GetNames(typeof(HomeBudgetApp.Domain.AccountType)).Select(e => new SelectListItem { Text = e }), new { @class = "custom-select" })
                 </div>
                 <span asp-validation-for="AccountType" class="text-danger"></span>
             </div>

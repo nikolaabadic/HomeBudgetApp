@@ -1,12 +1,8 @@
-﻿* {
-    font-family: Verdana;
-}
-body {
+﻿body {
     background-image: url(../img/login1.jpg);
     height: 90vh;
     background-size: cover;
     background-position: center;
-    font-family: 'Roboto', sans-serif;
 }
 .field {
     width: 250px;
@@ -32,5 +28,5 @@ body {
     padding-top: 200px;
 }
 .footer {
-    position: absolute;
+    background-color:transparent;
 }

@@ -6,7 +6,7 @@
 @section Style{
     <link rel="stylesheet" href="~/css/details.css" />
 }
-<h1>About me</h1>
+<h1 class="pb-3">About me</h1>
 
 <div class="user-info">
     <img src="~/img/user.png" />
@@ -26,34 +26,30 @@
     </dl>
 </div>
 <div class="accounts">
-    <h1>My Accounts</h1>
+    <div class="d-flex align-items-center pb-3">
+        <h1>My Accounts</h1>
+        <a href="@Url.Action("Create", "Account", new { userID = Model.UserID })" class="pl-5">
+            <i class="bi bi-journal-plus"> Create account</i>
+        </a>
 
-    <input type="text" class="input" id="search-value" />
-    <button class="btn btn-light" id="search">Search</button>
-    <a href="@Url.Action("Create", "Account", new { userID = Model.UserID })">
-        <i class="bi bi-journal-plus"> Create account</i>
-    </a>
-    <table class="table">
-        <thead>
-            <tr>
-                <th>Number</th>
-                <th>Type</th>
-                <th>Currency</th>
-                <th></th>
-            </tr>
-        </thead>
+        <div class="ml-auto">
+            <div class="d-flex align-items-center">
+                <input type="text" class="form-control mr-2" id="search-value" placeholder="Search accounts.." />
+                <i id="search" class="bi bi-search" style="color:black; font-size:20px;"></i>
+            </div>
+        </div>
+    </div>
+
+    <table class="table results mt-3">
         <tbody>
             @foreach (var a in Model.Accounts)
             {
-                <tr>
-                    <td>@a.Number</td>
+                <tr class="account-rows">
+                    <th>
+                        @Html.ActionLink(@a.Number, "ShowDetails", "Account", new { id = a.AccountID })
+                    </th>
                     <td>@a.AccountType</td>
                     <td>@a.Currency</td>
-                    <td>
-                        <div class="action-link">
-                            @Html.ActionLink("Details", "ShowDetails", "Account", new { id = a.AccountID })
-                        </div>
-                    </td>
                 </tr>
             }
         </tbody>
