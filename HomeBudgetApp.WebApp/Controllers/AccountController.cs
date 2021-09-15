@@ -184,7 +184,11 @@ namespace HomeBudgetApp.WebApp.Controllers
             }
             catch (Exception)
             {
-                return RedirectToAction("Details", "User");
+                return View("Error", new ErrorViewModel
+                {
+                    StatusCode = 404,
+                    Message = "Error loading account. Please try again later."
+                });
             }
 
         }
@@ -202,7 +206,7 @@ namespace HomeBudgetApp.WebApp.Controllers
         // POST: AccountController/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-    
+        [LoggedInUser]
         public ActionResult Create(AccountDetailsModel model)
         {
 
@@ -233,6 +237,7 @@ namespace HomeBudgetApp.WebApp.Controllers
         }
 
         [HttpPost]
+        [LoggedInUser]
         public ActionResult Delete(int AccountID, int UserID)
         {
             try
@@ -242,11 +247,24 @@ namespace HomeBudgetApp.WebApp.Controllers
                 unitOfWork.Account.Edit(account);
                 unitOfWork.Commit();
             }
-            catch (Exception e)
+            catch (Exception)
             {
-                Console.WriteLine(e.StackTrace);
+                return Json(new
+                {
+                    redirectToUrl = Url.Action("ReturnError", "Account", new ErrorViewModel
+                    {
+                        StatusCode = 500,
+                        Message = "Error deleting account. Please try again later."
+                    })
+                });
             }
             return Json(new { redirectToUrl = Url.Action("ShowDetails", "User", new { id = UserID }) });
+        }
+
+        [LoggedInUser]
+        public ActionResult ReturnError(ErrorViewModel model)
+        {
+            return View("Error", model);
         }
 
         [LoggedInUser]

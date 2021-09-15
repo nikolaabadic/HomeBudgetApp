@@ -17,7 +17,7 @@ img{
     padding-left: 20px;
     color: black !important;
 }
-h1,h2 {
+h1,h2, h6 {
     color: black !important;
 }
 .accounts{
@@ -48,13 +48,16 @@ h1,h2 {
 .final-column{
     display:flex;
     flex-direction:column;
+    width: 240px;
 }
 #add-category,#add-category-edit{
     margin-bottom:20px;
     align-self:flex-end;
 }
 .create {
-    align-self: flex-end;
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
 }
 h3,h4,dd,dt{
     color:black !important;    
@@ -108,11 +111,11 @@ canvas{
     margin-bottom: -1rem;
     padding-left:50px;
 }
-.results > tbody > tr > th:first-child {
-    border-left-style: none;
-    border-top-left-radius: 10px;
-    border-bottom-left-radius: 10px;
-}
+    .results > tbody > tr > th:first-child, td:first-child {
+        border-left-style: none;
+        border-top-left-radius: 10px;
+        border-bottom-left-radius: 10px;
+    }
 
 .results > tbody > tr > td:last-child {
     border-right-style: none;

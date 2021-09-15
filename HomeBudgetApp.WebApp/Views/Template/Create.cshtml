@@ -6,7 +6,7 @@
 @section Style{
     <link rel="stylesheet" href="~/css/details.css" />
 }
-<h1>New template</h1>
+<h1 class="mt-2">New template</h1>
 <hr />
 <div class="row">
     <form asp-action="CreateTemplate" class="payment">
@@ -43,14 +43,14 @@
                 <span asp-validation-for="Transaction.RecipientAccountNumber" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="Transaction.RecipientName" class="control-label"></label>
+                <label asp-for="Transaction.RecipientName" class="control-label">Recipient Name</label>
                 <input required asp-for="Transaction.RecipientName" class="form-control" value="@Model.Transaction.RecipientName" />
                 <span asp-validation-for="Transaction.RecipientName" class="text-danger"></span>
             </div>
         </div>
         <div>
             <div class="form-group">
-                <label asp-for="Transaction.RecipientAddress" class="control-label"></label>
+                <label asp-for="Transaction.RecipientAddress" class="control-label">Recipient Address</label>
                 <input required asp-for="Transaction.RecipientAddress" class="form-control" value="@Model.Transaction.RecipientAddress" />
                 <span asp-validation-for="Transaction.RecipientAddress" class="text-danger"></span>
             </div>
@@ -72,17 +72,17 @@
         <div class="final-column">
             <div class="form-group">
                 <label asp-for="Transaction.Amount" class="control-label"></label>
-                <input required asp-for="Transaction.Amount" class="form-control" value=@Model.Transaction.Amount />
+                <input required type="number" min="0" asp-for="Transaction.Amount" class="form-control" value=@Model.Transaction.Amount />
             </div>
             <div class="form-group">
-                <label asp-for="CategoryID" class="control-label">Category:</label>
-                @Html.DropDownList("CategoryID", Model.Categories)
+                <label asp-for="CategoryID" class="control-label">Category</label>
+                @Html.DropDownList("CategoryID", Model.Categories, new { @class="custom-select"})
             </div>
             <div class="form-group">
                 <label asp-for="Name" class="control-label"></label>
                 <input required asp-for="Name" class="form-control" />
             </div>
-            <div class="form-group create">
+            <div class="form-group d-flex justify-content-end">
                 <input type="submit" value="Create" class="btn btn-primary" />
             </div>
         </div>

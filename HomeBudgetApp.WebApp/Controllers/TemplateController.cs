@@ -92,7 +92,7 @@ namespace HomeBudgetApp.WebApp.Controllers
                     Type = type
                 });
                 unitOfWork.Commit();
-                return RedirectToAction("Details", "Account");
+                return RedirectToAction("Index");
             } else
             {
                 ModelState.AddModelError(string.Empty,"Please enter a unique template name.");
@@ -105,11 +105,22 @@ namespace HomeBudgetApp.WebApp.Controllers
 
         public ActionResult Delete(int id)
         {
-            Template template = unitOfWork.Template.FindByID(id);
-            unitOfWork.Template.Delete(template);
-            unitOfWork.Commit();
+            try
+            {
+                Template template = unitOfWork.Template.FindByID(id);
+                unitOfWork.Template.Delete(template);
+                unitOfWork.Commit();
 
-            return RedirectToAction("Index");
+                return RedirectToAction("Index");
+            }
+            catch (Exception)
+            {
+                return View("Error", new ErrorViewModel
+                 {
+                        StatusCode = 500,
+                        Message = "Error deleting template. Please try again later."                   
+                });
+            }
         }
 
         public ActionResult Edit(int id)
@@ -156,20 +167,39 @@ namespace HomeBudgetApp.WebApp.Controllers
        [HttpGet]
        public ActionResult Details(int templateID)
        {
-            Template template = unitOfWork.Template.FindByID(templateID);
-            template.Category = unitOfWork.Category.FindByID(template.CategoryID);
-            TemplateCreateModel model = new TemplateCreateModel { 
-                Template = template
-            };
-            return View(model);
+            try
+            {
+                Template template = unitOfWork.Template.FindByID(templateID);
+                template.Category = unitOfWork.Category.FindByID(template.CategoryID);
+                TemplateCreateModel model = new TemplateCreateModel
+                {
+                    Template = template
+                };
+                return View(model);
+            }
+            catch (Exception)
+            {
+                return View("Error", new ErrorViewModel
+                {
+                    StatusCode = 404,
+                    Message = "Error loading template. Please try again later."
+                });
+            }
        }
 
         [HttpPost]
         public ActionResult Search(string Param)
         {
             int id = (int)HttpContext.Session.GetInt32("userid");
-            List<Template> templates = unitOfWork.Template.Search(t => t.UserID == id && t.Name.ToLower().Contains(Param)).OrderBy(t => t.Name).ToList();
-            
+            List<Template> templates = null;
+            if (string.IsNullOrEmpty(Param))
+            {
+                templates = unitOfWork.Template.Search(t => t.UserID == id);
+            } else
+            {
+                templates = unitOfWork.Template.Search(t => t.UserID == id && t.Name.ToLower().Contains(Param)).OrderBy(t => t.Name).ToList();
+            }
+
             HttpContext.Session.Set("templates", System.Text.Json.JsonSerializer.SerializeToUtf8Bytes(templates));
 
             return Json(new { redirectToUrl = Url.Action("Index") });

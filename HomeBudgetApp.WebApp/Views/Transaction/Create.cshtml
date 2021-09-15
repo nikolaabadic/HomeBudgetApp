@@ -6,13 +6,14 @@
 @section Style{
     <link rel="stylesheet" href="~/css/details.css" />
 }
-<h1>New payment</h1>
+<h1 class="mt-2">New transaction</h1>
 <hr />
-<div class="row">
+<div class="row mb-5">
     <form asp-action="Create" class="payment">
         <div>
             <input hidden asp-for="AccountID" class="form-control" value="@Model.AccountID" />
-            <select asp-for="Transaction.Type" id="transaction-type">
+            <label class="control-label">Type</label>
+            <select asp-for="Transaction.Type" id="transaction-type" class="custom-select mb-3">
                 @if (Model.Type == "income")
                 {
                     <option value="expense">Expense</option>
@@ -56,14 +57,14 @@
                 <span asp-validation-for="RecipientAccountNumber" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="Transaction.RecipientName" class="control-label"></label>
+                <label asp-for="Transaction.RecipientName" class="control-label">Recipient Name</label>
                 <input required asp-for="Transaction.RecipientName" class="form-control" />
                 <span asp-validation-for="Transaction.RecipientName" class="text-danger"></span>
             </div>
         </div>
         <div>
             <div class="form-group">
-                <label asp-for="Transaction.RecipientAddress" class="control-label"></label>
+                <label asp-for="Transaction.RecipientAddress" class="control-label">Recipient Address</label>
                 <input required asp-for="Transaction.RecipientAddress" class="form-control" />
                 <span asp-validation-for="Transaction.RecipientAddress" class="text-danger"></span>
             </div>
@@ -85,29 +86,27 @@
         <div class="final-column">
             <div class="form-group">
                 <label asp-for="Transaction.Amount" class="control-label"></label>
-                <input required asp-for="Transaction.Amount" class="form-control" />
+                <input required asp-for="Transaction.Amount" class="form-control" type="number" min="0"/>
             </div>
             <div class="form-group">
                 <label class="control-label">Categories:</label>
                 @Html.DropDownList("Category", Model.Categories, new { @class = "form-control", @id = "category-select" })
             </div>
-            <button class="btn-dark" id="add-category">Add category</button>
+            <button class="btn btn-primary" id="add-category">Add category</button>
             <table class="table" id="categories">
                 <thead>
                     <tr>
                         <th>Num</th>
-                        <th>CategoryID</th>
                         <th>Name</th>
+                        <th></th>
                     </tr>
                 </thead>
                 <tbody>
                 </tbody>
             </table>
-            <div>
-                <input type="checkbox" asp-for="CreateTemplate"/><label>Create Template?</label>
-            </div>
             <div class="form-group create">
-                <input type="submit" value="Create" class="btn btn-primary"/>
+                <input type="checkbox" asp-for="CreateTemplate" class="custom-checkbox" /><label>Create Template?</label>
+                <input type="submit" value="Create" class="btn btn-primary" />
             </div>
         </div>
     </form>
@@ -118,14 +117,13 @@
         $('#transaction-type').change(function (e) {
             e.preventDefault();
 
-            const type = $('#transaction-type').val()
+            const type = $('#transaction-type').val();
             if (type === 'income') {
                 $('#account-number').val("").attr('readonly', false);
                 $('#recipient-number').val('@Model.AccountNumber').attr('readonly', true);
             } else {
                 $('#account-number').val('@Model.AccountNumber').attr('readonly', true);
                 $('#recipient-number').val("").attr('readonly', false);
-
             }
         })
 
@@ -144,4 +142,10 @@
                 }
             });
         });
-    </script>}
+
+        function DeleteCategory(Num) {
+            $("#categories tr").eq(Num+1).remove();
+            location.reload();
+        }
+    </script>
+}

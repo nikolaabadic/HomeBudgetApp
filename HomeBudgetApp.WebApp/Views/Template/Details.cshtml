@@ -6,7 +6,7 @@
 @section Style{
     <link rel="stylesheet" href="~/css/details.css" />
 }
-<h1>@Model.Template.Name</h1>
+<h1 class="mt-2">@Model.Template.Name</h1>
 <hr />
 <div class="row">
     <div class="payment">
@@ -24,14 +24,14 @@
                 <span asp-validation-for="Template.RecipientAccountNumber" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="Template.RecipientName" class="control-label"></label>
+                <label asp-for="Template.RecipientName" class="control-label">Recipient Name</label>
                 <input readonly asp-for="Template.RecipientName" class="form-control" value="@Model.Template.RecipientName" />
                 <span asp-validation-for="Template.RecipientName" class="text-danger"></span>
             </div>
         </div>
         <div>
             <div class="form-group">
-                <label asp-for="Template.RecipientAddress" class="control-label"></label>
+                <label asp-for="Template.RecipientAddress" class="control-label">Recipient Address</label>
                 <input readonly asp-for="Template.RecipientAddress" class="form-control" value="@Model.Template.RecipientAddress" />
                 <span asp-validation-for="Template.RecipientAddress" class="text-danger"></span>
             </div>
@@ -56,7 +56,7 @@
                 <input readonly asp-for="Template.Amount" class="form-control" value=@Model.Template.Amount />
             </div>
             <div class="form-group">
-                <label asp-for="Template.Category.Name" class="control-label"></label>
+                <label asp-for="Template.Category.Name" class="control-label">Category</label>
                 <input readonly asp-for="Template.Category.Name" class="form-control" value=@Model.Template.Category.Name />
             </div>
             <div class="form-group">
@@ -67,5 +67,17 @@
     </div>
     <div asp-validation-summary="ModelOnly" class="text-danger"></div>
 </div>
-@Html.ActionLink("Edit", "Edit", "Template", new { id = Model.Template.TemplateID })
-@Html.ActionLink("Delete", "Delete", "Template", new { id = Model.Template.TemplateID })
+
+<div class="d-flex">
+    <div class="mr-4">
+        <i class="bi bi-gear-fill pr-2" style="color:black;"></i>
+        @Html.ActionLink("Edit template", "Edit", "Template", new { id = Model.Template.TemplateID })
+    </div>
+    <div class="">
+        <i class="bi bi-trash-fill pr-2" style="color:black;"></i>
+        @Html.ActionLink("Delete template", "Delete", "Template", new { id = Model.Template.TemplateID })
+    </div>
+</div>
+
+
+

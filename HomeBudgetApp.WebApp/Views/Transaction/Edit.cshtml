@@ -6,9 +6,9 @@
 @section Style{
     <link rel="stylesheet" href="~/css/details.css" />
 }
-<h1>Edit Payment</h1>
+<h1 class="mt-2">Edit Transaction</h1>
 <hr />
-<div class="row">
+<div class="row mb-5">
     <form asp-action="Edit" class="payment">
         <div>
             <div class="form-group">
@@ -47,14 +47,14 @@
                 <input hidden asp-for="Transaction.RecipientID" class="form-control" value="@Model.Transaction.RecipientID" />
             </div>
             <div class="form-group">
-                <label asp-for="Transaction.RecipientName" class="control-label"></label>
+                <label asp-for="Transaction.RecipientName" class="control-label">Recipient Name</label>
                 <input required asp-for="Transaction.RecipientName" class="form-control" value="@Model.Transaction.RecipientName" />
                 <span asp-validation-for="Transaction.RecipientName" class="text-danger"></span>
             </div>
         </div>
         <div>
             <div class="form-group">
-                <label asp-for="Transaction.RecipientAddress" class="control-label"></label>
+                <label asp-for="Transaction.RecipientAddress" class="control-label">Recipient Address</label>
                 <input required asp-for="Transaction.RecipientAddress" class="form-control" value="@Model.Transaction.RecipientAddress" />
                 <span asp-validation-for="Transaction.RecipientAddress" class="text-danger"></span>
             </div>
@@ -77,26 +77,18 @@
         <div class="final-column">
             <div class="form-group">
                 <label asp-for="Transaction.Amount" class="control-label"></label>
-                <input required asp-for="Transaction.Amount" class="form-control" value="@Model.Transaction.Amount" />
+                <input required asp-for="Transaction.Amount" class="form-control" value="@Model.Transaction.Amount" type="number" min="0"/>
                 <span asp-validation-for="Transaction.Amount" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label class="control-label">Categories:</label>
+                <label class="control-label">Categories</label>
                 @Html.DropDownList("Category", Model.Categories, new { @class = "form-control", @id = "category-select" })
             </div>
-           @if (Model.Transaction.Categories == null || (Model.Transaction.Categories != null && Model.Transaction.Categories.Count == 0))
-            {
-                <button class="btn btn-dark" id="add-category">Add category</button>
-            }
-            else
-            {
-                <button class="btn btn-primary" id="add-category-edit">Add category</button>
-            }
+            <button class="btn btn-primary" id="add-category-edit">Add category</button>
             <table class="table" id="categories">
                 <thead>
                     <tr>
                         <th>Num</th>
-                        <th>CategoryID</th>
                         <th>Name</th>
                         <th></th>
                     </tr>
@@ -106,7 +98,6 @@
                     {
                         <tr>
                             <td>@(Model.Transaction.Categories.IndexOf(item)+1)</td>
-                            <td>@item.CategoryID</td>
                             @foreach (var category in Model.CategoryList)
                             {
                                 if (category.CategoryID == item.CategoryID)
@@ -114,12 +105,14 @@
                                     <td>@category.Name</td>
                                 }
                             }
-                            <td><a href="javascript:DeleteCategory(@Model.Transaction.TransactionID,@item.CategoryID,@item.OwnerID)">Delete</a></td>
+                            <td><a href="javascript:DeleteCategory(@Model.Transaction.TransactionID,@item.CategoryID,@item.OwnerID,@Model.Transaction.Categories.IndexOf(item))">
+                                <i class="bi bi-x-circle" style="color:red;"></i></a>
+                            </td>
                         </tr>
                     }
                 </tbody>
             </table>
-            <div class="form-group create">
+            <div class="form-group d-flex justify-content-end">
                 <input type="submit" value="Save" class="btn btn-primary" />
             </div>
         </div>
@@ -128,25 +121,6 @@
 </div>
 @section Scripts{
     <script>
-        $('#add-category').click(function (e) {
-            e.preventDefault();
-
-            $.ajax({
-                url: '@Url.ActionLink("AddCategory", "Transaction")',
-                method: 'post',
-                data: {
-                    CategoryID: parseInt($('#category-select').val()),
-                    Num: parseInt($('#categories tbody tr').length),
-                    OwnerID: @Model.OwnerID,
-                    },
-                success: function (data) {
-                    $('#categories tbody').append(data);
-                },
-                error: function () {
-                    alert("Error");
-                }
-            });
-        });
         $('#add-category-edit').click(function (e) {
             e.preventDefault();
 
@@ -163,11 +137,11 @@
                     $('#categories tbody').append(data);
                 },
                 error: function () {
-                    alert("Error");
+                    alert("Error adding category.");
                 }
             });
         });
-        function DeleteCategory(PaymentID, CategoryID, OwnerID) {
+        function DeleteCategory(PaymentID, CategoryID, OwnerID, Num) {
                 $.ajax({
                     url: "@Url.Action("DeleteCategory","Transaction")" ,
                     type: 'Delete',
@@ -177,12 +151,16 @@
                         ownerID: OwnerID
                     },
                     success: function () {
-                        location.reload()
+                        DeleteFromList(Num);
                     },
                     error: function (xhr) {
                         alert('error');
                     }
                 });
+        }
+        function DeleteFromList(Num) {
+            $("#categories tr").eq(Num + 1).remove();
+            location.reload();
         }
     </script>
 }

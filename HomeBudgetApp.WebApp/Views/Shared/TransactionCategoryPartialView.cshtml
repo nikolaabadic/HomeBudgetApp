@@ -2,9 +2,25 @@
 <tr>
     <td>@(Model.Num + 1)</td>
     <td>
-        @Model.CategoryID
+        @Model.Name
         <input hidden value="@Model.CategoryID" name="Transaction.Categories[@Model.Num].CategoryID" />
         <input hidden value="@Model.OwnerID" name="Transaction.Categories[@Model.Num].OwnerID" />
+        <input hidden value="@Model.TransactionID" name="TransactionID" />
     </td>
-    <td>@Model.Name</td>
+    @if (Model.TransactionID == 0)
+    {
+        <td>
+            <a href="javascript:DeleteCategory()">
+                <i class="bi bi-x-circle" style="color:red;"></i>
+            </a>
+        </td>
+    }
+    else
+    {
+        <td>
+            <a href="javascript:DeleteCategory(@Model.TransactionID,@Model.CategoryID,@Model.OwnerID,@Model.Num)">
+                <i class="bi bi-x-circle" style="color:red;"></i>
+            </a>
+        </td>
+    }
 </tr>

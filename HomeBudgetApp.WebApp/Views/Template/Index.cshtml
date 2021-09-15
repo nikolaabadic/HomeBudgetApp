@@ -7,53 +7,65 @@
     <link rel="stylesheet" href="~/css/details.css" />
 }
 
-<h1>Your templates</h1>
-<input type="text" class="input" id="search-value" />
-<button class="btn btn-light" id="search">Search</button>
-<table class="table">
-    <thead>
-        <tr>
-            <th>
-                Name
-            </th>
-            <th>
-                Category
-            </th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var item in Model.Templates)
-        {
+<div class="d-flex justify-content-between align-items-center mt-2">
+    <h1>Your templates</h1>
+    <div class="d-flex justify-content-end align-items-center">
+        <input type="text" class="form-control pr-2" id="search-value" />
+        <i id="search" class="bi bi-search" style="color:black; font-size:20px;"></i>
+    </div>
+
+</div>
+<hr />
+@if (Model.Templates == null || Model.Templates.Count == 0)
+{
+    <h6 class="mt-5">No templates found.</h6>
+}
+else
+{
+    <table class="table transactions mt-3 mb-5" style="width:50%; margin:initial;">
+        <thead>
             <tr>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Name)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => Model.Categories.Single(c => c.CategoryID == item.CategoryID).Name)
-                </td>
-                <td>
-                    @Html.ActionLink("Create a Transaction", "CreateFromTemplate", "Transaction",
-                        new HomeBudgetApp.WebApp.Models.TransactionFromTemplateModel
-                        {
-                            RecipientName = item.RecipientName,
-                            RecipientAddress = item.RecipientAddress,
-                            Model = item.Model,
-                            Purpose = item.Purpose,
-                            ReferenceNumber = item.ReferenceNumber,
-                            Amount = item.Amount,
-                            RecipientAccountNumber = item.RecipientAccountNumber,
-                            AccountNumber = item.AccountNumber,
-                            Type = item.Type
-                        })
-                </td>
-                <td>
-                    @Html.ActionLink("Details", "Details", "Template", new { templateID = item.TemplateID })
-                </td>
+                <th>
+                    Name
+                </th>
+                <th>
+                    Category
+                </th>
+                <th></th>
             </tr>
-        }
-    </tbody>
-</table>
+        </thead>
+        <tbody>
+            @foreach (var item in Model.Templates)
+            {
+                <tr>
+                    <td>
+                        @Html.ActionLink(item.Name, "Details", "Template", new { templateID = item.TemplateID })
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => Model.Categories.Single(c => c.CategoryID == item.CategoryID).Name)
+                    </td>
+                    <td>
+                        <i class="bi bi-wallet2"></i>
+                        @Html.ActionLink("Create a Transaction", "CreateFromTemplate", "Transaction",
+                            new HomeBudgetApp.WebApp.Models.TransactionFromTemplateModel
+                            {
+                                RecipientName = item.RecipientName,
+                                RecipientAddress = item.RecipientAddress,
+                                Model = item.Model,
+                                Purpose = item.Purpose,
+                                ReferenceNumber = item.ReferenceNumber,
+                                Amount = item.Amount,
+                                RecipientAccountNumber = item.RecipientAccountNumber,
+                                AccountNumber = item.AccountNumber,
+                                Type = item.Type
+                            })
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
 @section Scripts{
     <script>
     $('#search').click(function (e) {

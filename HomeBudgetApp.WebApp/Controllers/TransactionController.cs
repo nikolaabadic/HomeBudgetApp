@@ -46,13 +46,24 @@ namespace HomeBudgetApp.WebApp.Controllers
 
             if (id != null && recipientID != null && accountID != null && ownerAccountID != null)
             {
-                List<TransactionCategory> belongings = unitOfWork.TransactionCategory.Search(b => b.TransactionID == (int)id && b.OwnerID == (int)ownerAccountID);
-                TransactionDetailsModel model = new TransactionDetailsModel();
-                model.Transaction = unitOfWork.Transaction.FindByID((int)id);
-                model.Transaction.Categories = belongings;
-                model.Categories = unitOfWork.Category.GetAll();
-                model.OwnerAccountID = (int)ownerAccountID;
-                return View(model);
+                try
+                {
+                    List<TransactionCategory> belongings = unitOfWork.TransactionCategory.Search(b => b.TransactionID == (int)id && b.OwnerID == (int)ownerAccountID);
+                    TransactionDetailsModel model = new TransactionDetailsModel();
+                    model.Transaction = unitOfWork.Transaction.FindByID((int)id);
+                    model.Transaction.Categories = belongings;
+                    model.Categories = unitOfWork.Category.GetAll();
+                    model.OwnerAccountID = (int)ownerAccountID;
+                    return View(model);
+                } catch (Exception)
+                {
+                    return View("Error", new ErrorViewModel
+                    {
+                        StatusCode = 404,
+                        Message = "Error loading transaction. Please try again later."
+                    });
+                }
+
             }
             return RedirectToAction("Details", "Account");
         }
@@ -91,7 +102,8 @@ namespace HomeBudgetApp.WebApp.Controllers
                     Num = Num,
                     CategoryID = CategoryID,
                     Name = category.Name,
-                    OwnerID = OwnerID
+                    OwnerID = OwnerID,
+                    TransactionID = TransactionID
                 };
                 TransactionCategory b = new TransactionCategory
                 {
@@ -101,6 +113,12 @@ namespace HomeBudgetApp.WebApp.Controllers
                 };
                 unitOfWork.TransactionCategory.Add(b);
                 unitOfWork.Commit();
+
+                Transaction transaction = unitOfWork.Transaction.FindByID(TransactionID);
+                List<TransactionCategory> list = unitOfWork.TransactionCategory.Search(c => c.TransactionID == TransactionID && c.OwnerID == OwnerID);
+                transaction.Categories = list;
+
+                model.Transaction = transaction;
                 return PartialView("TransactionCategoryPartialView", model);
             }
             catch (Exception)
@@ -125,6 +143,14 @@ namespace HomeBudgetApp.WebApp.Controllers
             {
                 return RedirectToAction("Details", "Account");
             }
+        }
+        
+        [HttpPost]
+        public ActionResult DeleteFromCategoryList(int CategoryID, List<TransactionCategory> list)
+        {
+            TransactionCategory category = list.Single(c => c.CategoryID == CategoryID);
+            list.Remove(category);
+            return PartialView("TransactionCategoryPartialView");
         }
 
         public ActionResult Create()
@@ -325,7 +351,7 @@ namespace HomeBudgetApp.WebApp.Controllers
         {
             try
             {
-                unitOfWork.Transaction.UpdateCategoryList(model.Transaction, model.Transaction.Categories);
+                //unitOfWork.Transaction.UpdateCategoryList(model.Transaction, model.Transaction.Categories);
                 Transaction transaction = unitOfWork.Transaction.FindByID(model.Transaction.TransactionID);
 
 
@@ -456,7 +482,7 @@ namespace HomeBudgetApp.WebApp.Controllers
 
             if (String.IsNullOrEmpty(Param))
             {
-                transactions = unitOfWork.Transaction.Search(t => t.AccountID == id || t.RecipientID == id).OrderBy(t => t.DateTime).Reverse().ToList();
+                return RedirectToAction("Search");
             } else
             {
                 transactions = transactions.OrderBy(t => t.DateTime).Reverse().ToList();
@@ -502,11 +528,30 @@ namespace HomeBudgetApp.WebApp.Controllers
         [HttpPost]
         public ActionResult Delete(int transactionID, int accountID)
         {
-            TransactionAccount obj = unitOfWork.TransactionAccount.FindByID(accountID, transactionID);
-            obj.Hidden = true;
-            unitOfWork.TransactionAccount.Edit(obj);
-            unitOfWork.Commit();
-            return Json(new { redirectToUrl = Url.Action("Details", "Account") });
+            try
+            {
+                TransactionAccount obj = unitOfWork.TransactionAccount.FindByID(accountID, transactionID);
+                obj.Hidden = true;
+                unitOfWork.TransactionAccount.Edit(obj);
+                unitOfWork.Commit();
+                return Json(new { redirectToUrl = Url.Action("Details", "Account") });
+            }
+            catch (Exception)
+            {
+                return Json(new
+                {
+                    redirectToUrl = Url.Action("ReturnError", "Transaction", new ErrorViewModel
+                    {
+                        StatusCode = 500,
+                        Message = "Error deleting transaction. Please try again later."
+                    })
+                });
+            }
+        }
+
+        public ActionResult ReturnError(ErrorViewModel model)
+        {
+            return View("Error", model);
         }
     }
 }

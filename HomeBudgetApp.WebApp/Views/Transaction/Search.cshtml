@@ -7,61 +7,65 @@
     <link rel="stylesheet" href="~/css/details.css" />
 }
 
-<h1>Search Transaction</h1>
+<h1 class="mt-2">Search Transactions</h1>
+<hr />
 
-<div class="search-container">
-    <input id="param" type="text" value="@Model.Query" />
-    <select id="type">
+<div class="d-flex align-items-center justify-content-between" style="width:80%; margin:auto;">
+    <input id="param" type="text" value="@Model.Query" class="form-control" style="width:200px;" />
+    <select id="type" class="custom-select" style="width:150px;">
         <option value="0" selected>Choose type</option>
         <option value="1">Income</option>
         <option value="2">Expense</option>
     </select>
-    <select id="dateOrder">
+    <select id="dateOrder" class="custom-select" style="width:150px;">
         <option value="0" selected>Sort by date</option>
         <option value="1">Most recent</option>
         <option value="2">From begining</option>
     </select>
-    @Html.DropDownList("CategoryID", Model.Categories)
+    @Html.DropDownList("CategoryID", Model.Categories, new { @class = "custom-select", @style = "width:200px;" })
     <button class="btn btn-primary" id="btn-search">Search</button>
 </div>
 
+@if (Model.Transactions == null || Model.Transactions.Count == 0)
+{
+    <h6 class="mt-5">No transactions found.</h6>
+}
+else
+{
+    <table class="table transactions mt-3">
+        <thead>
+            <tr>
+                <th></th>
+                <th>Amount</th>
+                <th>DateTime</th>
+                <th>Purpose</th>
+                <th>Sender</th>
+                <th>Recipient</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var t in Model.Transactions)
+            {
+                <tr>
+                    @if (t.AccountID == Model.OwnerAccountID)
+                    {
+                        <td><i class="bi bi-dash-circle" style="color:red;"></i></td>
+                    }
+                    else
+                    {
+                        <td><i class="bi bi-plus-circle" style="color:green;"></i></td>
+                    }
+                    <td>@t.Amount</td>
+                    <td>@t.DateTime.Date.ToString("dd/MM/yyyy")</td>
+                    <td>@Html.ActionLink(t.Purpose, "ShowDetails", "Transaction", new { id = t.TransactionID, t.AccountID, t.RecipientID, Model.OwnerAccountID })</td>
+                    <td>@t.AccountNumber</td>
+                    <td>@t.RecipientAccountNumber</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
 
-<table class="table">
-    <thead>
-        <tr>
-            <th></th>
-            <th>Amount</th>
-            <th>DateTime</th>
-            <th>Purpose</th>
-            <th>Sender</th>
-            <th>Recipient</th>
-            <th></th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var t in Model.Transactions)
-        {
-        <tr>
-            @if (t.AccountID == Model.OwnerAccountID)
-            {
-                <td><img class="payment-icon" src="~/img/minus.png" /></td>
-            }
-            else
-            {
-                <td><img class="payment-icon" src="~/img/plus.png" /></td>
-            }
-            <td>@t.Amount</td>
-            <td>@t.DateTime.Date.ToString("dd/MM/yyyy")</td>
-            <td>@t.Purpose</td>
-            <td>@t.AccountNumber</td>
-            <td>@t.RecipientAccountNumber</td>
-            <td>@Html.ActionLink("Details", "ShowDetails", "Transaction", new { id = t.TransactionID, t.AccountID, t.RecipientID, Model.OwnerAccountID })</td>
-            <td>@Html.ActionLink("Edit", "ShowEdit", "Transaction", new { id = t.TransactionID, t.AccountID, t.RecipientID, Model.OwnerAccountID })</td>
-        </tr>
-        }
-    </tbody>
-</table>
 
 @section Scripts{
     <script>

@@ -39,7 +39,13 @@
             </div>
         </div>
     </div>
-
+    <hr />
+    @if (Model.Accounts == null || Model.Accounts.Count == 0)
+    {
+        <h6>No accounts found</h6>
+    }
+    else
+    {
     <table class="table results mt-3">
         <tbody>
             @foreach (var a in Model.Accounts)
@@ -54,6 +60,7 @@
             }
         </tbody>
     </table>
+    }
 
 </div>
 @section Scripts{
